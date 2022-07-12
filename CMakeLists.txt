@@ -3,5 +3,9 @@ project(RepParse)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(RepParse main.cpp
-        src src/token/I_Token.h src/token/operators/Binary.h src/token/operators/Unary.h src/token/operators/I_Operator.h src/token/operators/E_Binary.h src/token/operators/E_Unary.h)
+add_executable(RepParse
+        src/Tokenizer.h src/Tokenizer.cpp
+        src/RepParse.h src/RepParse.cpp
+        src/token/Token.h src/token/Token.cpp
+        src/token/E_TokenType.h
+        src/main.cpp)

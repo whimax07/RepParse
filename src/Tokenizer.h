@@ -10,7 +10,8 @@
 #include <utility>
 #include <vector>
 #include <cassert>
-#include "token/I_Token.h"
+#include <regex>
+#include "token/Token.h"
 
 
 class Tokenizer {
@@ -18,7 +19,7 @@ class Tokenizer {
 private:
     std::string input_;
 
-    std::vector<I_Token> tokens_;
+    std::vector<Token> tokens_;
 
     int fast_ = 0;
 
@@ -26,23 +27,35 @@ private:
 
 
 public:
-    static std::vector<I_Token> tokenize(std::string toTokenize) {
-        return (new Tokenizer(std::move(toTokenize)))->tokens_;
+    static std::vector<Token> tokenize(std::string toTokenize) {
+        auto *tokenizer = new Tokenizer(std::move(toTokenize));
+        return tokenizer->tokens_;
     }
 
 
 private:
     explicit Tokenizer(std::string input)
             : input_(std::move(input)), tokens_() {
-        begin();
+        start();
     }
 
-    void begin();
+    void start();
 
-    bool isOperator();
+    bool checkIfOperator();
 
-    I_Token getLastToken();
+    bool checkIfBracket();
 
+    bool checkIfNumber();
+
+    void parseHex();
+
+    void parseBin();
+
+    void parseDec();
+
+    void addNumberToken(const std::__cxx11::basic_regex<char>& pattern);
+
+    Token getLastToken();
 };
 
 
