@@ -7,6 +7,9 @@
 #include "Tokenizer.h"
 
 int main() {
-    auto test = Tokenizer::tokenize("123 + 456");
-    std::cout << test << std::endl;
+    std::cout << Tokenizer::tokenize("") << std::endl;
+    std::cout << Tokenizer::tokenize("1") << std::endl;
+    std::cout << Tokenizer::tokenize("0x1") << std::endl;
+    std::cout << Tokenizer::tokenize("0xr") << std::endl;
+    std::cout << Tokenizer::tokenize("123 + 456") << std::endl;
 }
