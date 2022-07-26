@@ -7,54 +7,53 @@
 
 
 #include <utility>
-
-#include "../token/OldToken.h"
+#include "../token/Token.h"
 
 
 
 class AST {
 
 private:
-    OldToken value_;
+    Token value_;
 
-    OldToken left_;
+    Token left_;
 
-    OldToken right_;
-
-
-public:
-    explicit AST(OldToken value) : value_(std::move(value)), left_(), right_() {  }
-
-    AST(OldToken value, OldToken left) : value_(std::move(value)),
-                                         left_(std::move(left)), right_() {  }
-
-    AST(OldToken value, OldToken left, OldToken right) : value_(std::move(value)),
-                                                         left_(std::move(left)),
-                                                         right_(std::move(right)) {  }
+    Token right_;
 
 
 public:
-    OldToken getValue() {
+    explicit AST(Token value)
+            : value_(value), left_(), right_() {  }
+
+    AST(Token value, Token left)
+            : value_(value), left_(left), right_() {  }
+
+    AST(Token value, Token left, Token right)
+            : value_(value), left_(left), right_(right) {  }
+
+
+public:
+    Token getValue() {
         return value_;
     }
 
-    void setValue(OldToken value) {
+    void setValue(Token value) {
         AST::value_ = value;
     }
 
-    OldToken getLeft() {
+    Token getLeft() {
         return left_;
     }
 
-    void setLeft(OldToken left) {
+    void setLeft(Token left) {
         AST::left_ = left;
     }
 
-    OldToken getRight() {
+    Token getRight() {
         return right_;
     }
 
-    void setRight(OldToken right) {
+    void setRight(Token right) {
         AST::right_ = right;
     }
 
