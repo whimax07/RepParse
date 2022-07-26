@@ -2,62 +2,71 @@
 // Created by max on 12/07/22.
 //
 
-#include "Token.h"
+#include "OldToken.h"
 
 #include <utility>
 
 
 
-bool Token::isNumber() {
-    return type_ == E_TokenType::NUMBER;
+
+OldToken::OldToken() {
+    string_ = "";
+    precedence_ = 0;
+    isLeftAssociative_ = false;
+    type_ = E_TokenType::END;
 }
 
 
-Token::Token(std::string string, E_TokenType type)
+OldToken::OldToken(std::string string, E_TokenType type)
         : string_(std::move(string)), type_(type), precedence_(0),
         isLeftAssociative_(true) {}
 
 
-Token::Token(std::string string, E_TokenType type, int precedence,
-             bool isLeftAssociative)
+OldToken::OldToken(std::string string, E_TokenType type, int precedence,
+                   bool isLeftAssociative)
         : string_(std::move(string)), type_(type), precedence_(precedence),
           isLeftAssociative_(isLeftAssociative) {}
 
 
+bool OldToken::isNumber() {
+    return type_ == E_TokenType::NUMBER;
+}
+
+
 bool
-Token::isOperator() {
+OldToken::isOperator() {
     return type_ == E_TokenType::ADD || type_ == E_TokenType::SUBTRACT || type_ == E_TokenType::MULTIPLY
            || type_ == E_TokenType::DIVIDE || type_ == E_TokenType::NEGATE || type_ == E_TokenType::SENTENTIAL;
 }
 
 
 bool
-Token::isUnary() {
+OldToken::isUnary() {
     return type_ == E_TokenType::NEGATE;
 }
 
 
 bool
-Token::isBinary() {
+OldToken::isBinary() {
     return type_ == E_TokenType::ADD || type_ == E_TokenType::SUBTRACT || type_ == E_TokenType::MULTIPLY
            || type_ == E_TokenType::DIVIDE;
 }
 
 
 bool
-Token::isSentential() {
+OldToken::isSentential() {
     return type_ == E_TokenType::SENTENTIAL;
 }
 
 
 bool
-Token::isEnd() {
+OldToken::isEnd() {
     return type_ == E_TokenType::END;
 }
 
 
 bool
-Token::operatorGreater(Token x, Token y) {
+OldToken::operatorGreater(OldToken x, OldToken y) {
     if (!x.isOperator() || !y.isOperator()) {
         throw std::exception();
     }
@@ -88,12 +97,11 @@ Token::operatorGreater(Token x, Token y) {
 
 
 E_TokenType
-Token::getType() const {
+OldToken::getType() const {
     return type_;
 }
 
-
 const std::string
-&Token::getString() const {
+&OldToken::getString() const {
     return string_;
 }

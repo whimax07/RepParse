@@ -58,10 +58,11 @@ Tokenizer::checkIfOperator() {
             }
             break;
         }
-        default:
-            return false;
 
+        default: return false;
     }
+
+    return true;
 }
 
 
@@ -160,7 +161,7 @@ Tokenizer::addNumberToken(
 }
 
 
-Token
+OldToken
 Tokenizer::getLastToken() {
     assert(!tokens_.empty());
     return tokens_[tokens_.size() - 1];

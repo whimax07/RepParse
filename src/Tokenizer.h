@@ -11,7 +11,7 @@
 #include <vector>
 #include <cassert>
 #include <regex>
-#include "token/Token.h"
+#include "token/OldToken.h"
 
 
 class Tokenizer {
@@ -19,7 +19,7 @@ class Tokenizer {
 private:
     std::string input_;
 
-    std::vector<Token> tokens_;
+    std::vector<OldToken> tokens_;
 
     int fast_ = 0;
 
@@ -27,7 +27,7 @@ private:
 
 
 public:
-    static std::vector<Token> tokenize(std::string toTokenize) {
+    static std::vector<OldToken> tokenize(std::string toTokenize) {
         auto *tokenizer = new Tokenizer(std::move(toTokenize));
         return tokenizer->tokens_;
     }
@@ -55,7 +55,7 @@ private:
 
     void addNumberToken(const std::__cxx11::basic_regex<char>& pattern);
 
-    Token getLastToken();
+    OldToken getLastToken();
 };
 
 

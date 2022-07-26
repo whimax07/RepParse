@@ -7,6 +7,9 @@
 
 
 #include <string>
+#include <utility>
+#include "Tokenizer.h"
+#include "tree/AST.h"
 
 
 /**
@@ -15,10 +18,25 @@
  */
 class RepParse {
 
+    std::vector<OldToken> tokens_;
+
+    std::string input_;
+
+    std::stack<OldToken> operators_;
+
+    std::stack<AST> operands_;
+
 
 public:
-    void parse(std::string stringToParse) {
+    RepParse() : tokens_(), input_(), operators_(), operands_() {  }
 
+
+public:
+    AST parse(std::string stringToParse) {
+        input_ = stringToParse;
+        tokens_ = Tokenizer::tokenize(std::move(stringToParse));
+
+        return operands_.top();
     }
 
 
