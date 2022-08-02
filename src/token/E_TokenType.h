@@ -6,6 +6,7 @@
 #define REPPARSE_E_TOKENTYPE_H
 
 
+
 enum class E_TokenType {
     ADD,
     SUBTRACT,
@@ -32,6 +33,9 @@ constexpr const char* E_TokenTypeToString(E_TokenType e) {
         case E_TokenType::SENTENTIAL: return "SENTENTIAL";
         case E_TokenType::END: return "END";
         case E_TokenType::NUMBER: return "NUMBER";
+        default: throw std::invalid_argument(
+            "Token type doesn't match an existing enum."
+        );
     }
 }
 

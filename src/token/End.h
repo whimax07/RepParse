@@ -23,6 +23,10 @@ public:
     explicit End(E_End id) noexcept : id_(id) {}
 
 
+private:
+    void emptyFunToken() override {}
+
+
 public:
     bool operator==(const End &rhs) const {
         return id_ == rhs.id_;
@@ -32,9 +36,11 @@ public:
         return !(rhs == *this);
     }
 
-};
+    std::ostream &operator<<(std::ostream &os) override {
+        return os << "END";
+    }
 
-static const End END = End(E_End::END);
+};
 
 
 

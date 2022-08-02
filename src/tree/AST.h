@@ -11,25 +11,25 @@
 
 
 
-class AST {
+class AST  {
 
 private:
     Token value_;
 
-    Token left_;
+    AST left_;
 
-    Token right_;
+    AST right_;
 
 
 public:
     explicit AST(Token value)
-            : value_(value), left_(), right_() {  }
+            : value_(std::move(value)), left_(), right_() {  }
 
-    AST(Token value, Token left)
-            : value_(value), left_(left), right_() {  }
+    AST(Token value, AST left)
+            : value_(std::move(value)), left_(left), right_() {  }
 
-    AST(Token value, Token left, Token right)
-            : value_(value), left_(left), right_(right) {  }
+    AST(Token value, AST left, AST right)
+            : value_(std::move(value)), left_(left), right_(right) {  }
 
 
 public:
@@ -38,22 +38,22 @@ public:
     }
 
     void setValue(Token value) {
-        AST::value_ = value;
+        AST::value_ = std::move(value);
     }
 
-    Token getLeft() {
+    AST getLeft() {
         return left_;
     }
 
-    void setLeft(Token left) {
+    void setLeft(AST left) {
         AST::left_ = left;
     }
 
-    Token getRight() {
+    AST getRight() {
         return right_;
     }
 
-    void setRight(Token right) {
+    void setRight(AST right) {
         AST::right_ = right;
     }
 

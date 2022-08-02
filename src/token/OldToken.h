@@ -76,13 +76,16 @@ public:
 
 
 inline std::ostream &operator<<(std::ostream &os, OldToken const &token) {
-    os << "OldToken{ type=" << token.getType() << ", String=" << token.getString()
-       << " }";
+    os << "OldToken{ type=" << token.getType() << ", String="
+       << token.getString() << " }";
     return os;
 }
 
 
-inline std::ostream &operator<<(std::ostream &os, std::vector<OldToken> const &tokens) {
+inline std::ostream &operator<<(
+        std::ostream &os,
+        std::vector<OldToken> const &tokens
+) {
     os << "[";
     for (int i = 0; i < tokens.size() - 1; i++) {
         os << tokens[i] << ", ";

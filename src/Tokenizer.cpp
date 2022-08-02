@@ -4,6 +4,8 @@
 
 #include <regex>
 #include "Tokenizer.h"
+#include "token/Symbols.h"
+#include "token/NumericToken.h"
 
 
 void
@@ -35,26 +37,44 @@ Tokenizer::start() {
 
 
 bool
+Tokenizer::isSubtract() {
+    if (tokens_.empty()) {
+        return false;
+    }
+
+    auto lastToken = getLastToken();
+    auto rawLastToken = &lastToken;
+
+    auto number = dynamic_cast<NumericToken *>(rawLastToken);
+    bool isNumber = number != nullptr;
+
+    bool isCloseBracket = false;
+    if (auto bracket = dynamic_cast<Brackets *>(rawLastToken);
+            bracket != nullptr) {
+        isCloseBracket = *bracket == symbols::CLOSE_BRACKET;
+    }
+
+    return isNumber || isCloseBracket;
+}
+
+
+bool
 Tokenizer::checkIfOperator() {
     switch (input_[fast_]) {
         case '*':
-            tokens_.emplace_back("*", E_TokenType::MULTIPLY, 5, true);
+            tokens_.push_back(symbols::MULTIPLY);
             break;
         case '/':
-            tokens_.emplace_back("/", E_TokenType::DIVIDE, 5, true);
+            tokens_.push_back(symbols::DIVIDE);
             break;
         case '+':
-            tokens_.emplace_back("+", E_TokenType::ADD, 3, true);
+            tokens_.push_back(symbols::ADD);
             break;
         case '-': {
-            bool isSubtract = !tokens_.empty()
-                    && (getLastToken().isNumber()
-                        || getLastToken().getType()
-                           == E_TokenType::CLOSE_BRACKET);
-            if (isSubtract) {
-                tokens_.emplace_back("-", E_TokenType::SUBTRACT, 3, true);
+            if (isSubtract()) {
+                tokens_.push_back(symbols::SUBTRACT);
             } else {
-                tokens_.emplace_back("-", E_TokenType::NEGATE, 4, false);
+                tokens_.push_back(symbols::NEGATE);
             }
             break;
         }
@@ -72,10 +92,10 @@ Tokenizer::checkIfBracket() {
 
     switch (input_[fast_]) {
         case '(':
-            tokens_.emplace_back("(", E_TokenType::OPEN_BRACKET);
+            tokens_.push_back(symbols::OPEN_BRACKET);
             break;
         case ')':
-            tokens_.emplace_back(")", E_TokenType::CLOSE_BRACKET);
+            tokens_.push_back(symbols::CLOSE_BRACKET);
             break;
         default:
             out = false;
@@ -137,7 +157,8 @@ Tokenizer::parseBin() {
 }
 
 
-void Tokenizer::parseDec() {
+void
+Tokenizer::parseDec() {
     std::regex hexDigits ("[0-9_,]+[.]?[0-9_,]*");
     addNumberToken(hexDigits);
 }
@@ -145,7 +166,7 @@ void Tokenizer::parseDec() {
 
 void
 Tokenizer::addNumberToken(
-        const std::regex& pattern
+        Regex pattern
 ) {
     std::smatch results;
     std::string str = input_.substr(fast_);
@@ -155,13 +176,13 @@ Tokenizer::addNumberToken(
         throw std::exception();
     }
 
-    fast_ += results[0].length();
-    tokens_.emplace_back(input_.substr(slow_, fast_), E_TokenType::NUMBER);
+    fast_ += results[0].str().length();
+    tokens_.push_back(NumericToken(input_.substr(slow_, fast_)));
     fast_ --;
 }
 
 
-OldToken
+Token
 Tokenizer::getLastToken() {
     assert(!tokens_.empty());
     return tokens_[tokens_.size() - 1];

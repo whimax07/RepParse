@@ -12,22 +12,27 @@
 #include <cassert>
 #include <regex>
 #include "token/OldToken.h"
+#include "token/Token.h"
 
 
 class Tokenizer {
 
+public:
+    using Regex = std::__cxx11::basic_regex<char> &;
+
+
 private:
     std::string input_;
 
-    std::vector<OldToken> tokens_;
+    std::vector<Token> tokens_;
 
-    int fast_ = 0;
+    uint64_t fast_ = 0;
 
-    int slow_ = 0;
+    uint64_t slow_ = 0;
 
 
 public:
-    static std::vector<OldToken> tokenize(std::string toTokenize) {
+    static std::vector<Token> tokenize(std::string toTokenize) {
         auto *tokenizer = new Tokenizer(std::move(toTokenize));
         return tokenizer->tokens_;
     }
@@ -53,9 +58,11 @@ private:
 
     void parseDec();
 
-    void addNumberToken(const std::__cxx11::basic_regex<char>& pattern);
+    void addNumberToken(Regex pattern);
 
-    OldToken getLastToken();
+    bool isSubtract();
+
+    Token getLastToken();
 };
 
 

@@ -2,8 +2,8 @@
 // Created by max on 26/07/22.
 //
 
-#ifndef REPPARSE_NUMBERTOKEN_H
-#define REPPARSE_NUMBERTOKEN_H
+#ifndef REPPARSE_NUMERICTOKEN_H
+#define REPPARSE_NUMERICTOKEN_H
 
 
 #include <utility>
@@ -12,7 +12,8 @@
 #include "Token.h"
 
 
-class NumberToken : public Token {
+
+class NumericToken : public Token {
 private:
     Number number_;
 
@@ -20,8 +21,12 @@ private:
 
 
 public:
-    explicit NumberToken(std::string stringNumber) :
+    explicit NumericToken(std::string stringNumber) :
             stringNumber_(std::move(stringNumber)) {}
+
+
+private:
+    void emptyFunToken() override {}
 
 
 public:
@@ -43,7 +48,14 @@ public:
         stringNumber_ = stringNumber;
     }
 
+    std::ostream &operator<<(std::ostream &os) override {
+        return os << "NumericToken{ String: " << stringNumber_
+                  << ", Number: " << std::to_string(number_.u64)
+                  << " }";
+    }
+
 };
 
 
-#endif //REPPARSE_NUMBERTOKEN_H
+
+#endif //REPPARSE_NUMERICTOKEN_H

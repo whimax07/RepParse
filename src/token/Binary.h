@@ -9,6 +9,8 @@
 #include "Operator.h"
 #include "Token.h"
 
+
+
 enum class E_Binary {
     ADD,
     SUBTRACT,
@@ -16,8 +18,21 @@ enum class E_Binary {
     DIVIDE
 };
 
+constexpr const char* E_BinaryToString(E_Binary e) {
+    switch (e) {
+        case E_Binary::ADD: return "ADD";
+        case E_Binary::SUBTRACT: return "SUBTRACT";
+        case E_Binary::MULTIPLY: return "MULTIPLY";
+        case E_Binary::DIVIDE: return "DIVIDE";
+        default: throw std::invalid_argument(
+            "Token type doesn't match an existing enum."
+        );
+    }
+}
 
-class Binary : public Token, Operator {
+
+
+class Binary : public Operator {
 private:
     const E_Binary id_;
 
@@ -27,13 +42,13 @@ private:
 
 
 public:
-    Binary(E_Binary id, int precedence, bool isLeftAssociative) noexcept
-            : id_(id), precedence_(precedence),
+    Binary(E_Binary id, int precedence, bool isLeftAssociative) noexcept :
+            id_(id), precedence_(precedence),
             isLeftAssociative_(isLeftAssociative) {}
 
 
 private:
-    void emptyFunOperator() override {}
+    void emptyFunToken() override {}
 
 
 public:
@@ -55,13 +70,15 @@ public:
         return !(rhs == *this);
     }
 
+    std::ostream &operator<<(std::ostream &os) override {
+        return os << "Binary{ Type: " << E_BinaryToString(id_)
+                  <<  ", Precedence: " << precedence_
+                  << ", Left Associative: " << isLeftAssociative_
+                  << " }";
+    }
+
 };
 
-
-static const Binary ADD = Binary(E_Binary::ADD, 3, true);
-static const Binary SUBTRACT = Binary(E_Binary::SUBTRACT, 3, true);
-static const Binary MULTIPLY = Binary(E_Binary::MULTIPLY, 5, true);
-static const Binary DIVIDE = Binary(E_Binary::DIVIDE, 5, true);
 
 
 #endif //REPPARSE_BINARY_H

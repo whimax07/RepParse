@@ -16,7 +16,8 @@ enum class E_Sentinel {
 };
 
 
-class Sentinel : public Token, Operator {
+
+class Sentinel : public Operator {
 private:
     E_Sentinel id_;
 
@@ -26,7 +27,7 @@ public:
 
 
 private:
-    void emptyFunOperator() override {}
+    void emptyFunToken() override {}
 
 
 public:
@@ -38,10 +39,12 @@ public:
         return !(rhs == *this);
     }
 
+    std::ostream &operator<<(std::ostream &os) override {
+        return os << "SENTINEL";
+    }
+
 };
 
-
-static const Sentinel SENTINEL = Sentinel(E_Sentinel::SENTINEL);
 
 
 #endif //REPPARSE_SENTINEL_H

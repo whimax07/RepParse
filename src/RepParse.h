@@ -10,6 +10,8 @@
 #include <utility>
 #include "Tokenizer.h"
 #include "tree/AST.h"
+#include "token/Sentinel.h"
+#include "token/Symbols.h"
 
 
 /**
@@ -18,29 +20,46 @@
  */
 class RepParse {
 
-    std::vector<OldToken> tokens_;
+private:
+    std::vector<Token> tokens_;
 
-    std::string input_;
+    std::string toParse_;
 
-    std::stack<OldToken> operators_;
+    std::stack<Token> operators_;
 
     std::stack<AST> operands_;
 
-
-public:
-    RepParse() : tokens_(), input_(), operators_(), operands_() {  }
+    size_t currentPosition_ = 0;
 
 
 public:
-    AST parse(std::string stringToParse) {
-        input_ = stringToParse;
-        tokens_ = Tokenizer::tokenize(std::move(stringToParse));
+    RepParse() :
+            tokens_(), toParse_(), operators_(), operands_()
+    {  }
 
-        return operands_.top();
-    }
+    explicit RepParse(std::string toParse) :
+            tokens_(), toParse_(std::move(toParse)), operators_(), operands_()
+    {  }
+
+
+public:
+    static AST parse(const std::string &stringToParse);
 
 
 private:
+    AST parse();
+
+    void expect(Token token);
+
+    const Token & next();
+
+    void consume();
+
+    AST makeLeaf(Token value);
+
+    AST makeNode(Unary unaryOperator, AST value);
+
+    AST makeNode(Binary binaryOperator, AST value1, AST value2);
 
 };
 

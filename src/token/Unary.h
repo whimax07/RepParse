@@ -13,6 +13,16 @@ enum class E_Unary {
     NEGATE
 };
 
+constexpr const char* E_UnaryToString(E_Unary e) {
+    switch (e) {
+        case E_Unary::NEGATE: return "NEGATE";
+        default: throw std::invalid_argument(
+            "Token type doesn't match an existing enum."
+        );
+    }
+}
+
+
 
 class Unary : public Operator {
 private:
@@ -27,7 +37,7 @@ public:
 
 
 private:
-    void emptyFunOperator() override {}
+    void emptyFunToken() override {}
 
 
 public:
@@ -44,11 +54,18 @@ public:
         return !(rhs == *this);
     }
 
+    std::ostream &operator<<(std::ostream &os) override {
+        return os << "Unary{ Type: " << E_UnaryToString(id_)
+                  << ", Precedence: " << precedence_
+                  << " }";
+    }
+
 };
 
 
-[[maybe_unused]]
-static const Unary NEGATE = Unary(E_Unary::NEGATE, 4);
+
+
+
 
 
 #endif //REPPARSE_UNARY_H
