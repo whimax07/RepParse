@@ -8,181 +8,183 @@
 #include "token/Compare.h"
 #include "token/NumericToken.h"
 
-using namespace repper;
 
 
-// =============================================================================
-// ===== Public methods. =======================================================
-AST
-RepParse::parse(
-        const string &stringToParse
-) {
-    auto parser = RepParse(stringToParse);
-    return parser.parse();
-}
+namespace repper {
 
-
-
-// =============================================================================
-// ===== Private methods. ======================================================
-AST
-RepParse::parse() {
-    if (toParse_.empty()) {
-        // Return an empty AST.
-        return {};
+    // =========================================================================
+    // ===== Public methods. ===================================================
+    AST
+    RepParse::parse(
+            const string &stringToParse
+    ) {
+        auto parser = RepParse(stringToParse);
+        return parser.parse();
     }
 
-    tokens_ = Tokenizer::tokenize(toParse_);
 
-    operators_.push(symbols::SENTINEL);
-    parseE();
-    expect(symbols::END);
-    return operands_.top();
-}
+    // =========================================================================
+    // ===== Private methods. ==================================================
+    AST
+    RepParse::parse() {
+        if (toParse_.empty()) {
+            // Return an empty AST.
+            return {};
+        }
 
-/**
- * This is a recursive function but I like the way the alg flows with the
- * recursion. Also I don't know how to change it to a while loop of the top of
- * my head.
- */
-void
-RepParse::parseE() {
-    parseP();
+        tokens_ = Tokenizer::tokenize(toParse_);
 
-    shared_ptr<Binary> binary = dynamic_pointer_cast<Binary>(next());
-    while (binary != nullptr) {
-        pushOperator(*binary);
-        consume();
-        parseP();
-        binary = dynamic_pointer_cast<Binary>(next());
-    }
-
-    while (operators_.top() != symbols::SENTINEL) {
-        popOperator();
-    }
-}
-
-
-/**
- * This is a recursive function but I like the way the alg flows with the
- * recursion. Also I don't know how to change it to a while loop of the top of
- * my head.
- */
-void
-RepParse::parseP() {
-    auto nextT = next();
-
-    if (auto numericToken
-                = dynamic_pointer_cast<NumericToken>(nextT);
-            numericToken != nullptr) {
-        operands_.push(AST(numericToken));
-        consume();
-        return;
-    }
-
-    if (auto bracket = dynamic_pointer_cast<Brackets>(nextT);
-            bracket != nullptr && *bracket == symbols::OPEN_BRACKET) {
-        consume();
         operators_.push(symbols::SENTINEL);
         parseE();
-        expect(symbols::CLOSE_BRACKET);
-        operators_.pop();
-        return;
+        expect(symbols::END);
+        return operands_.top();
     }
 
-    if (auto unary = dynamic_pointer_cast<Unary>(nextT);
-            unary != nullptr) {
-        pushOperator(*unary);
-        consume();
+    /**
+     * This is a recursive function but I like the way the alg flows with the
+     * recursion. Also I don't know how to change it to a while loop of the top
+     * of my head.
+     */
+    void
+    RepParse::parseE() {
         parseP();
-        return;
+
+        shared_ptr<Binary> binary = dynamic_pointer_cast<Binary>(next());
+        while (binary != nullptr) {
+            pushOperator(*binary);
+            consume();
+            parseP();
+            binary = dynamic_pointer_cast<Binary>(next());
+        }
+
+        while (operators_.top() != symbols::SENTINEL) {
+            popOperator();
+        }
     }
 
-    throw logic_error(Utils::sstr(
-            "Unexpected type. The next token was expected to be numeric, an "
-            "open bracket or a unary operator when the parse reached this "
-            "token. Token: ", nextT
-    ));
-}
 
+    /**
+     * This is a recursive function but I like the way the alg flows with the
+     * recursion. Also I don't know how to change it to a while loop of the top
+     * of my head.
+     */
+    void
+    RepParse::parseP() {
+        auto nextT = next();
 
-void
-RepParse::pushOperator(
-        const Operator& _operator
-) {
-    while (Compare::precedence(&operators_.top(), &_operator)) {
-        popOperator();
-    }
+        if (auto numericToken
+                    = dynamic_pointer_cast<NumericToken>(nextT);
+                numericToken != nullptr) {
+            operands_.push(AST(numericToken));
+            consume();
+            return;
+        }
 
-    operators_.push(_operator);
-}
+        if (auto bracket = dynamic_pointer_cast<Brackets>(nextT);
+                bracket != nullptr && *bracket == symbols::OPEN_BRACKET) {
+            consume();
+            operators_.push(symbols::SENTINEL);
+            parseE();
+            expect(symbols::CLOSE_BRACKET);
+            operators_.pop();
+            return;
+        }
 
+        if (auto unary = dynamic_pointer_cast<Unary>(nextT);
+                unary != nullptr) {
+            pushOperator(*unary);
+            consume();
+            parseP();
+            return;
+        }
 
-void
-RepParse::popOperator() {
-    const Operator& anOperator = operators_.top();
-
-    if (auto binary = dynamic_cast<const Binary *>(&anOperator);
-            binary != nullptr) {
-        AST operand_2 = operands_.top();
-        operands_.pop();
-        AST operand_1 = operands_.top();
-        operands_.pop();
-
-        operands_.push(AST(
-                make_shared<Token>(anOperator),
-                make_shared<AST>(operand_1),
-                make_shared<AST>(operand_2)
+        throw logic_error(Utils::sstr(
+                "Unexpected type. The next token was expected to be numeric, an "
+                "open bracket or a unary operator when the parse reached this "
+                "token. Token: ", nextT
         ));
-
-        return;
     }
 
-    if (auto unary = dynamic_cast<const Unary *>(&anOperator);
-            unary != nullptr) {
-        AST operand = operands_.top();
-        operands_.pop();
 
-        operands_.push(AST(
-                make_shared<Token>(anOperator),
-                make_shared<AST>(operand)
-        ));
+    void
+    RepParse::pushOperator(
+            const Operator &_operator
+    ) {
+        while (Compare::precedence(&operators_.top(), &_operator)) {
+            popOperator();
+        }
 
-        return;
+        operators_.push(_operator);
     }
 
-    throw std::logic_error(Utils::sstr(
-            "Received a operator that wasn't Binary or Unary. Operator: ",
-            anOperator
-    ));
-}
 
+    void
+    RepParse::popOperator() {
+        const Operator &anOperator = operators_.top();
 
-void
-RepParse::expect(
-        const Token & token
-) {
-    if (*next() == token) {
-        consume();
-    } else {
+        if (auto binary = dynamic_cast<const Binary *>(&anOperator);
+                binary != nullptr) {
+            AST operand_2 = operands_.top();
+            operands_.pop();
+            AST operand_1 = operands_.top();
+            operands_.pop();
+
+            operands_.push(AST(
+                    make_shared<Token>(anOperator),
+                    make_shared<AST>(operand_1),
+                    make_shared<AST>(operand_2)
+            ));
+
+            return;
+        }
+
+        if (auto unary = dynamic_cast<const Unary *>(&anOperator);
+                unary != nullptr) {
+            AST operand = operands_.top();
+            operands_.pop();
+
+            operands_.push(AST(
+                    make_shared<Token>(anOperator),
+                    make_shared<AST>(operand)
+            ));
+
+            return;
+        }
+
         throw std::logic_error(Utils::sstr(
-                "Expected token: ", &token, ". Received: ", &*next()
+                "Received a operator that wasn't Binary or Unary. Operator: ",
+                anOperator
         ));
     }
-}
 
 
-shared_ptr<Token>
-RepParse::next() {
-    if (currentPosition_ < tokens_.size()) {
-        return make_shared<Token>(tokens_[currentPosition_]);
-    } else {
-        return make_shared<Token>(symbols::END);
+    void
+    RepParse::expect(
+            const Token &token
+    ) {
+        if (*next() == token) {
+            consume();
+        } else {
+            throw std::logic_error(Utils::sstr(
+                    "Expected token: ", &token, ". Received: ", &*next()
+            ));
+        }
     }
-}
 
 
-void
-RepParse::consume() {
-    currentPosition_ ++;
+    shared_ptr<Token>
+    RepParse::next() {
+        if (currentPosition_ < tokens_.size()) {
+            return tokens_[currentPosition_];
+        } else {
+            return make_shared<Token>(symbols::END);
+        }
+    }
+
+
+    void
+    RepParse::consume() {
+        currentPosition_++;
+    }
+
 }

@@ -13,60 +13,59 @@
 #include "token/Symbols.h"
 
 
-using namespace std;
+namespace repper {
+
+    /**
+     * An implementation from <a href="https://www.engr.mun.ca/~theo/Misc/exp_parsing.htm">
+     * Parsing Expressions by Recursive Descent Theodore Norvell (C) 1999 with
+     * updates later on.</a>
+     */
+    class RepParse {
+
+    private:
+        vector<TokenSPtr> tokens_;
+
+        string toParse_;
+
+        stack<Operator> operators_;
+
+        stack<AST> operands_;
+
+        size_t currentPosition_ = 0;
 
 
-/**
- * An implementation from <a href="https://www.engr.mun.ca/~theo/Misc/exp_parsing.htm">Parsing Expressions by Recursive
- * Descent Theodore Norvell (C) 1999 with updates later on.</a>
- */
-class RepParse {
+    public:
+        RepParse() :
+                tokens_(), toParse_(), operators_(), operands_() {}
 
-private:
-    vector<Token> tokens_;
-
-    string toParse_;
-
-    stack<Operator> operators_;
-
-    stack<AST> operands_;
-
-    size_t currentPosition_ = 0;
+        explicit RepParse(string toParse) :
+                tokens_(), toParse_(move(toParse)), operators_(), operands_() {}
 
 
-public:
-    RepParse() :
-            tokens_(), toParse_(), operators_(), operands_()
-    {  }
-
-    explicit RepParse(string toParse) :
-            tokens_(), toParse_(move(toParse)), operators_(), operands_()
-    {  }
+    public:
+        static AST parse(const string &stringToParse);
 
 
-public:
-    static AST parse(const string& stringToParse);
+    private:
+        AST parse();
+
+        void parseE();
+
+        void parseP();
+
+        void pushOperator(const Operator &_operator);
+
+        void popOperator();
+
+        void expect(const Token &token);
+
+        shared_ptr<Token> next();
+
+        void consume();
 
 
-private:
-    AST parse();
+    };
 
-    void parseE();
-
-    void parseP();
-
-    void pushOperator(const Operator& _operator);
-
-    void popOperator();
-
-    void expect(const Token& token);
-
-    shared_ptr<Token> next();
-
-    void consume();
-
-
-};
-
+}
 
 #endif //REPPARSE_REPPARSE_H

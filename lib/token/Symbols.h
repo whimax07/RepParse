@@ -14,6 +14,10 @@
 
 
 namespace symbols {
+
+    using namespace repper;
+
+
     static const End END = End(E_End::END);
 
     static const Sentinel SENTINEL = Sentinel(E_Sentinel::SENTINEL);
@@ -27,6 +31,7 @@ namespace symbols {
     static const Binary SUBTRACT = Binary(E_Binary::SUBTRACT, 3, true);
     static const Binary MULTIPLY = Binary(E_Binary::MULTIPLY, 5, true);
     static const Binary DIVIDE = Binary(E_Binary::DIVIDE, 5, true);
+
 }
 
 

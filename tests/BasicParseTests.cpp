@@ -3,7 +3,11 @@
 //
 #include <gtest/gtest.h>
 #include "utils/Utils.h"
+#include "Tokenizer.h"
+#include "token/Symbols.h"
 
+
+using namespace repper;
 
 
 // Demonstrate some basic assertions.
@@ -14,9 +18,15 @@ TEST(HelloTest, BasicAssertions) {
     EXPECT_EQ(7 * 6, 42);
 }
 
+
 TEST(RepParseBasic, EmptyParse) {
-    auto text = repper::Utils::sstr("");
-    auto text_2 = repper::Utils::sstr("Mismatched texted.");
-    EXPECT_FALSE(text == text_2);
-    std::cout << "Basic tests passed." << std::endl;
+    auto emptyTokens = Tokenizer::tokenize("");
+    EXPECT_TRUE(emptyTokens.empty());
+}
+
+
+TEST(RepParseBasic, SimpleParse) {
+    auto singleAdd = Tokenizer::tokenize("+");
+    EXPECT_TRUE(*singleAdd[0] == symbols::ADD);
+    EXPECT_FALSE(*singleAdd[0] == symbols::SUBTRACT);
 }

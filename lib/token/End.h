@@ -9,39 +9,44 @@
 #include "Token.h"
 
 
-enum class E_End {
-    END
-};
+
+namespace repper {
+
+    enum class E_End {
+        END
+    };
 
 
-class End : public Token {
-private:
-    const E_End id_;
+    class End : public Token {
+
+    private:
+        const E_End id_;
 
 
-public:
-    explicit End(E_End id) noexcept : id_(id) {}
+    public:
+        explicit End(E_End id) noexcept: id_(id) {}
 
 
-private:
-    void emptyFunToken() override {}
+    private:
+        void emptyFunToken() override {}
 
 
-public:
-    bool operator==(const End &rhs) const {
-        return id_ == rhs.id_;
-    }
+    public:
+        bool operator==(const End &rhs) const {
+            return id_ == rhs.id_;
+        }
 
-    bool operator!=(const End &rhs) const {
-        return !(rhs == *this);
-    }
+        bool operator!=(const End &rhs) const {
+            return !(rhs == *this);
+        }
 
-    std::ostream const &operator<<(std::ostream &os) override {
-        return os << "END";
-    }
+        std::ostream const &operator<<(std::ostream &os) override {
+            return os << "END";
+        }
 
-};
+    };
 
+}
 
 
 #endif //REPPARSE_END_H

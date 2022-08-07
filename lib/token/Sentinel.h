@@ -11,39 +11,43 @@
 
 
 
-enum class E_Sentinel {
-    SENTINEL
-};
+namespace repper {
+
+    enum class E_Sentinel {
+        SENTINEL
+    };
 
 
+    class Sentinel : public Operator {
 
-class Sentinel : public Operator {
-private:
-    E_Sentinel id_;
-
-
-public:
-    explicit Sentinel(E_Sentinel id) noexcept : id_(id) {}
+    private:
+        E_Sentinel id_;
 
 
-private:
-    void emptyFunToken() override {}
+    public:
+        explicit Sentinel(E_Sentinel id) noexcept: id_(id) {}
 
 
-public:
-    bool operator==(const Sentinel &rhs) const {
-        return id_ == rhs.id_;
-    }
+    private:
+        void emptyFunToken() override {}
 
-    bool operator!=(const Sentinel &rhs) const {
-        return !(rhs == *this);
-    }
 
-    std::ostream const &operator<<(std::ostream &os) override {
-        return os << "SENTINEL";
-    }
+    public:
+        bool operator==(const Sentinel &rhs) const {
+            return id_ == rhs.id_;
+        }
 
-};
+        bool operator!=(const Sentinel &rhs) const {
+            return !(rhs == *this);
+        }
+
+        std::ostream const &operator<<(std::ostream &os) override {
+            return os << "SENTINEL";
+        }
+
+    };
+
+}
 
 
 

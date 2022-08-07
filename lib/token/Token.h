@@ -9,34 +9,33 @@
 #include <ostream>
 
 
+namespace repper {
 
-class Token {
+    class Token {
 
-public:
+    public:
+        virtual void emptyFunToken();
+
+
+    public:
+        virtual bool operator==(const Token &rhs) const {
+            return true;
+        };
+
+        virtual bool operator!=(const Token &rhs) const {
+            return this != &rhs;
+        };
+
+        virtual std::ostream const &operator<<(std::ostream &os) {
+            return os << "Token{}";
+        }
+
+    };
+
+    inline void Token::emptyFunToken() {}
+
     using TokenSPtr = std::shared_ptr<Token>;
 
-
-public:
-    virtual void emptyFunToken();
-
-
-public:
-    virtual bool operator==(const Token &rhs) const {
-        return true;
-    };
-
-    virtual bool operator!=(const Token &rhs) const {
-        return this != &rhs;
-    };
-
-    virtual std::ostream const &operator<<(std::ostream &os) {
-        return os << "Token{}";
-    }
-
-};
-
-inline void Token::emptyFunToken() {  }
-
-
+}
 
 #endif //REPPARSE_TOKEN_H

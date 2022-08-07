@@ -11,12 +11,13 @@
 #include <vector>
 #include <cassert>
 #include <regex>
-#include "token/OldToken.h"
 #include "token/Token.h"
 
 
+namespace repper {
 
-//namespace repper {
+    using namespace std;
+
 
     class Tokenizer {
 
@@ -27,7 +28,7 @@
     private:
         std::string input_;
 
-        std::vector<Token> tokens_;
+        std::vector<TokenSPtr> tokens_;
 
         uint64_t fast_ = 0;
 
@@ -35,7 +36,7 @@
 
 
     public:
-        static std::vector<Token> tokenize(std::string toTokenize) {
+        static std::vector<TokenSPtr> tokenize(std::string toTokenize) {
             auto tokenizer = Tokenizer(std::move(toTokenize));
             return tokenizer.tokens_;
         }
@@ -65,11 +66,11 @@
 
         bool isSubtract();
 
-        Token getLastToken();
+        TokenSPtr getLastToken();
 
     };
 
-//}
+}
 
 
 #endif //REPPARSE_TOKENIZER_H

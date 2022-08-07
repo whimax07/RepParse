@@ -8,20 +8,24 @@
 
 #include <ostream>
 
-class Operator : public Token {
 
-public:
-    void emptyFunToken() override {  }
+namespace repper {
 
-    virtual void emptyFunOperator() {  }
+    class Operator : public Token {
 
-    friend std::ostream &
-    operator<<(std::ostream &os, const Operator &anOperator) {
-        return os << "Operator{ }";
-    }
+    public:
+        void emptyFunToken() override {}
 
+        virtual void emptyFunOperator() {}
 
-};
+        friend std::ostream &
+        operator<<(std::ostream &os, const Operator &anOperator) {
+            return os << "Operator{ }";
+        }
+
+    };
+
+}
 
 
 #endif //REPPARSE_OPERATOR_H

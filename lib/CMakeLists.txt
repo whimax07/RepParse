@@ -1,8 +1,6 @@
 add_library(RepParseLib STATIC
         Tokenizer.h Tokenizer.cpp
         RepParse.h RepParse.cpp
-        token/OldToken.h token/OldToken.cpp
-        token/E_TokenType.h
         tree/AST.h
         token/Operator.h
         token/Token.h
