@@ -14,7 +14,7 @@ namespace repper {
     class Token {
 
     public:
-        virtual void emptyFunToken();
+        virtual void emptyFunToken() {};
 
 
     public:
@@ -32,7 +32,6 @@ namespace repper {
 
     };
 
-    inline void Token::emptyFunToken() {}
 
     using TokenSPtr = std::shared_ptr<Token>;
 
