@@ -13,6 +13,22 @@
 
 
 
+union Number {
+    int16_t i16;
+    uint16_t u16;
+    int32_t i32;
+    uint32_t u32;
+    int64_t i64;
+    uint64_t u64;
+    float f32;
+    double f64;
+
+    // This is pretty neat. This will zero the union. Who knows what that means.
+    Number() = default;
+};
+
+
+
 class NumericToken : public Token {
 private:
     Number number_;
@@ -31,7 +47,7 @@ private:
 
 public:
     [[nodiscard]]
-    const Number &getNumber() const {
+    Number getNumber() const {
         return number_;
     }
 
@@ -48,7 +64,7 @@ public:
         stringNumber_ = stringNumber;
     }
 
-    std::ostream &operator<<(std::ostream &os) override {
+    std::ostream const &operator<<(std::ostream &os) override {
         return os << "NumericToken{ String: " << stringNumber_
                   << ", Number: " << std::to_string(number_.u64)
                   << " }";

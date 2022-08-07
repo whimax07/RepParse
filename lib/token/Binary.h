@@ -70,7 +70,7 @@ public:
         return !(rhs == *this);
     }
 
-    std::ostream &operator<<(std::ostream &os) override {
+    std::ostream const &operator<<(std::ostream &os) override {
         return os << "Binary{ Type: " << E_BinaryToString(id_)
                   <<  ", Precedence: " << precedence_
                   << ", Left Associative: " << isLeftAssociative_

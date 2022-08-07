@@ -8,7 +8,14 @@
 
 #include <ostream>
 
+
+
 class Token {
+
+public:
+    using TokenSPtr = std::shared_ptr<Token>;
+
+
 public:
     virtual void emptyFunToken();
 
@@ -22,7 +29,7 @@ public:
         return this != &rhs;
     };
 
-    virtual std::ostream &operator<<(std::ostream &os) {
+    virtual std::ostream const &operator<<(std::ostream &os) {
         return os << "Token{}";
     }
 

@@ -40,7 +40,7 @@ constexpr const char* E_TokenTypeToString(E_TokenType e) {
 }
 
 
-inline std::ostream &operator<<(std::ostream &os, E_TokenType const &type) {
+inline std::ostream const &operator<<(std::ostream &os, E_TokenType const &type) {
     os << E_TokenTypeToString(type);
     return os;
 }

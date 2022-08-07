@@ -7,11 +7,13 @@
 
 
 #include <string>
-#include <utility>
 #include "Tokenizer.h"
 #include "tree/AST.h"
 #include "token/Sentinel.h"
 #include "token/Symbols.h"
+
+
+using namespace std;
 
 
 /**
@@ -21,13 +23,13 @@
 class RepParse {
 
 private:
-    std::vector<Token> tokens_;
+    vector<Token> tokens_;
 
-    std::string toParse_;
+    string toParse_;
 
-    std::stack<Token> operators_;
+    stack<Operator> operators_;
 
-    std::stack<AST> operands_;
+    stack<AST> operands_;
 
     size_t currentPosition_ = 0;
 
@@ -37,29 +39,32 @@ public:
             tokens_(), toParse_(), operators_(), operands_()
     {  }
 
-    explicit RepParse(std::string toParse) :
-            tokens_(), toParse_(std::move(toParse)), operators_(), operands_()
+    explicit RepParse(string toParse) :
+            tokens_(), toParse_(move(toParse)), operators_(), operands_()
     {  }
 
 
 public:
-    static AST parse(const std::string &stringToParse);
+    static AST parse(const string& stringToParse);
 
 
 private:
     AST parse();
 
-    void expect(Token token);
+    void parseE();
 
-    const Token & next();
+    void parseP();
+
+    void pushOperator(const Operator& _operator);
+
+    void popOperator();
+
+    void expect(const Token& token);
+
+    shared_ptr<Token> next();
 
     void consume();
 
-    AST makeLeaf(Token value);
-
-    AST makeNode(Unary unaryOperator, AST value);
-
-    AST makeNode(Binary binaryOperator, AST value1, AST value2);
 
 };
 

@@ -4,9 +4,10 @@
 
 
 #include <iostream>
-#include "Tokenizer.h"
+//#include "Tokenizer.h"
 
 int main() {
+    std::cout << "Some text" << std::endl;
 //    std::cout << Tokenizer::tokenize("") << std::endl;
 //    std::cout << Tokenizer::tokenize("1") << std::endl;
 //    std::cout << Tokenizer::tokenize("0x1") << std::endl;

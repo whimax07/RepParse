@@ -39,7 +39,7 @@ public:
         return !(rhs == *this);
     }
 
-    std::ostream &operator<<(std::ostream &os) override {
+    std::ostream const &operator<<(std::ostream &os) override {
         return os << "SENTINEL";
     }
 

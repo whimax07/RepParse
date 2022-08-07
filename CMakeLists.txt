@@ -1,21 +1,53 @@
 cmake_minimum_required(VERSION 3.22)
-project(RepParse)
+project(RepParseRunnable)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(RepParse
-        src/main.cpp
-        src/Tokenizer.h src/Tokenizer.cpp
-        src/RepParse.h src/RepParse.cpp
-        src/token/OldToken.h src/token/OldToken.cpp
-        src/token/E_TokenType.h
-        src/tree/AST.h
-        src/token/Operator.h
-        src/token/Token.h
-        src/token/Binary.h
-        src/token/Unary.h
-        src/token/NumericToken.h
-        src/token/End.h
-        src/token/Sentinel.h
-        src/token/Brackets.h
-        src/token/Compare.h src/token/Symbols.h src/utils/Utils.h)
+
+
+# ==============================================================================
+# ===== Google stuff. ==========================================================
+# This grabs GTest stuff.
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG release-1.12.1
+        )
+FetchContent_MakeAvailable(googletest)
+# I think commenting this out will disable tests.
+enable_testing()
+# ----- End of a Google section. -----------------------------------------------
+
+
+
+# This should ask the CMakeList.txt in the lib dir to compile its contents.
+add_subdirectory(lib)
+
+# This builds the tests.
+add_executable(RepParseRunnable
+        tests/BasicParseTests.cpp
+        )
+
+# This links everything together. RepParseLib is set to static in its CMake.
+target_link_libraries(
+        RepParseRunnable
+        GTest::gtest_main
+        RepParseLib
+        )
+
+# I am not 100% sure this is correct as I don't know when PROJECT_SOURCE_DIR is
+# populated... or what it would be.
+target_include_directories(RepParseRunnable PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "${PROJECT_SOURCE_DIR}/lib"
+        )
+
+
+
+# ==============================================================================
+# ===== Google stuff. ==========================================================
+# The google has just kind of worked.
+include(GoogleTest)
+gtest_discover_tests(RepParseRunnable)
+# ----- End of a Google section. -----------------------------------------------
