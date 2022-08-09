@@ -64,19 +64,19 @@ namespace repper {
     Tokenizer::checkIfOperator() {
         switch (input_[fast_]) {
             case '*':
-                tokens_.push_back(make_shared<Token>(symbols::MULTIPLY));
+                tokens_.push_back(make_shared<Binary>(symbols::MULTIPLY));
                 break;
             case '/':
-                tokens_.push_back(make_shared<Token>(symbols::DIVIDE));
+                tokens_.push_back(make_shared<Binary>(symbols::DIVIDE));
                 break;
             case '+':
-                tokens_.push_back(make_shared<Token>(symbols::ADD));
+                tokens_.push_back(make_shared<Binary>(symbols::ADD));
                 break;
             case '-': {
                 if (isSubtract()) {
-                    tokens_.push_back(make_shared<Token>(symbols::SUBTRACT));
+                    tokens_.push_back(make_shared<Binary>(symbols::SUBTRACT));
                 } else {
-                    tokens_.push_back(make_shared<Token>(symbols::NEGATE));
+                    tokens_.push_back(make_shared<Unary>(symbols::NEGATE));
                 }
                 break;
             }
@@ -95,10 +95,10 @@ namespace repper {
 
         switch (input_[fast_]) {
             case '(':
-                tokens_.push_back(make_shared<Token>(symbols::OPEN_BRACKET));
+                tokens_.push_back(make_shared<Brackets>(symbols::OPEN_BRACKET));
                 break;
             case ')':
-                tokens_.push_back(make_shared<Token>(symbols::CLOSE_BRACKET));
+                tokens_.push_back(make_shared<Brackets>(symbols::CLOSE_BRACKET));
                 break;
             default:
                 out = false;
@@ -180,7 +180,7 @@ namespace repper {
         }
 
         fast_ += results[0].str().length();
-        tokens_.push_back(make_shared<Token>(
+        tokens_.push_back(make_shared<NumericToken>(
                 NumericToken(input_.substr(slow_, fast_))
         ));
         fast_--;

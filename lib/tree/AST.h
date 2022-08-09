@@ -8,7 +8,7 @@
 
 #include <utility>
 #include "../token/Token.h"
-
+#include "../token/Operator.h"
 
 
 namespace repper {

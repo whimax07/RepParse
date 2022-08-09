@@ -27,7 +27,7 @@ namespace repper {
 
         string toParse_;
 
-        stack<Operator> operators_;
+        stack<OperatorSPtr> operators_;
 
         stack<AST> operands_;
 
@@ -53,7 +53,7 @@ namespace repper {
 
         void parseP();
 
-        void pushOperator(const Operator &_operator);
+        void pushOperator(const OperatorSPtr& _operator);
 
         void popOperator();
 

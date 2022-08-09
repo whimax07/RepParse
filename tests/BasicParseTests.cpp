@@ -5,6 +5,7 @@
 #include "utils/Utils.h"
 #include "Tokenizer.h"
 #include "token/Symbols.h"
+#include "token/NumericToken.h"
 
 
 using namespace repper;
@@ -25,8 +26,21 @@ TEST(RepParseBasic, EmptyParse) {
 }
 
 
-TEST(RepParseBasic, SimpleParse) {
+TEST(RepParseBasic, SimpleParse1) {
     auto singleAdd = Tokenizer::tokenize("+");
     EXPECT_TRUE(*singleAdd[0] == symbols::ADD);
     EXPECT_FALSE(*singleAdd[0] == symbols::SUBTRACT);
+}
+
+
+TEST(RepParseBasic, SimpleParse2) {
+    auto singleAdd = Tokenizer::tokenize("10 + 20");
+    EXPECT_TRUE(*singleAdd[0] == NumericToken("10"));
+    EXPECT_TRUE(*singleAdd[1] == symbols::ADD);
+    EXPECT_TRUE(*singleAdd[2] == NumericToken("20"));
+
+    auto singleAddNoSpaces = Tokenizer::tokenize("10+20");
+    EXPECT_TRUE(*singleAddNoSpaces[0] == NumericToken("10"));
+    EXPECT_TRUE(*singleAddNoSpaces[1] == symbols::ADD);
+    EXPECT_TRUE(*singleAddNoSpaces[2] == NumericToken("20"));
 }

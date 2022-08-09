@@ -34,7 +34,7 @@ namespace repper {
 
         tokens_ = Tokenizer::tokenize(toParse_);
 
-        operators_.push(symbols::SENTINEL);
+        operators_.push(make_shared<Sentinel>(symbols::SENTINEL));
         parseE();
         expect(symbols::END);
         return operands_.top();
@@ -49,15 +49,14 @@ namespace repper {
     RepParse::parseE() {
         parseP();
 
-        shared_ptr<Binary> binary = dynamic_pointer_cast<Binary>(next());
-        while (binary != nullptr) {
-            pushOperator(*binary);
+        while (auto binary = dynamic_pointer_cast<Binary>(next())) {
+            pushOperator(binary);
             consume();
             parseP();
             binary = dynamic_pointer_cast<Binary>(next());
         }
 
-        while (operators_.top() != symbols::SENTINEL) {
+        while (*operators_.top() != symbols::SENTINEL) {
             popOperator();
         }
     }
@@ -72,9 +71,7 @@ namespace repper {
     RepParse::parseP() {
         auto nextT = next();
 
-        if (auto numericToken
-                    = dynamic_pointer_cast<NumericToken>(nextT);
-                numericToken != nullptr) {
+        if (auto numericToken = dynamic_pointer_cast<NumericToken>(nextT)) {
             operands_.push(AST(numericToken));
             consume();
             return;
@@ -83,16 +80,15 @@ namespace repper {
         if (auto bracket = dynamic_pointer_cast<Brackets>(nextT);
                 bracket != nullptr && *bracket == symbols::OPEN_BRACKET) {
             consume();
-            operators_.push(symbols::SENTINEL);
+            operators_.push(make_shared<Sentinel>(symbols::SENTINEL));
             parseE();
             expect(symbols::CLOSE_BRACKET);
             operators_.pop();
             return;
         }
 
-        if (auto unary = dynamic_pointer_cast<Unary>(nextT);
-                unary != nullptr) {
-            pushOperator(*unary);
+        if (auto unary = dynamic_pointer_cast<Unary>(nextT)) {
+            pushOperator(unary);
             consume();
             parseP();
             return;
@@ -108,9 +104,9 @@ namespace repper {
 
     void
     RepParse::pushOperator(
-            const Operator &_operator
+            const OperatorSPtr& _operator
     ) {
-        while (Compare::precedence(&operators_.top(), &_operator)) {
+        while (Compare::precedence(operators_.top(), _operator)) {
             popOperator();
         }
 
@@ -120,17 +116,16 @@ namespace repper {
 
     void
     RepParse::popOperator() {
-        const Operator &anOperator = operators_.top();
+        auto anOperator = operators_.top();
 
-        if (auto binary = dynamic_cast<const Binary *>(&anOperator);
-                binary != nullptr) {
+        if (auto binary = dynamic_pointer_cast<Binary>(anOperator)) {
             AST operand_2 = operands_.top();
             operands_.pop();
             AST operand_1 = operands_.top();
             operands_.pop();
 
             operands_.push(AST(
-                    make_shared<Token>(anOperator),
+                    binary,
                     make_shared<AST>(operand_1),
                     make_shared<AST>(operand_2)
             ));
@@ -138,13 +133,12 @@ namespace repper {
             return;
         }
 
-        if (auto unary = dynamic_cast<const Unary *>(&anOperator);
-                unary != nullptr) {
+        if (auto unary = dynamic_pointer_cast<Unary>(anOperator)) {
             AST operand = operands_.top();
             operands_.pop();
 
             operands_.push(AST(
-                    make_shared<Token>(anOperator),
+                    anOperator,
                     make_shared<AST>(operand)
             ));
 
