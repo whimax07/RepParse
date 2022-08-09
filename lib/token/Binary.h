@@ -47,12 +47,14 @@ namespace repper {
         const bool isLeftAssociative_;
 
 
+    // Constructors.
     public:
         Binary(E_Binary id, int precedence, bool isLeftAssociative) noexcept:
                 id_(id), precedence_(precedence),
                 isLeftAssociative_(isLeftAssociative) {}
 
 
+    // Polymorphism functions.
     private:
         void emptyFunToken() override {}
 
@@ -63,6 +65,7 @@ namespace repper {
         }
 
 
+    // Getter, Setters and operators.
     public:
         [[nodiscard]]
         int getPrecedence() const {
@@ -79,6 +82,21 @@ namespace repper {
                       << ", Precedence: " << precedence_
                       << ", Left Associative: " << isLeftAssociative_
                       << " }";
+        }
+
+
+    // Public API.
+    public:
+        template<class T, class U>
+        T evalBinary(T lhs, U rhs) {
+            static_assert(sizeof(T) >= sizeof(U));
+
+            switch (id_) {
+                case E_Binary::MULTIPLY: return lhs * rhs;
+                case E_Binary::DIVIDE: return lhs / rhs;
+                case E_Binary::ADD: return lhs + rhs;
+                case E_Binary::SUBTRACT: return lhs - rhs;
+            }
         }
 
     };
