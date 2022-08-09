@@ -7,6 +7,7 @@
 
 
 #include <ostream>
+#include "NumericToken.h"
 
 
 namespace repper {
@@ -18,12 +19,18 @@ namespace repper {
 
         virtual void emptyFunOperator() {}
 
-        friend std::ostream &
-        operator<<(std::ostream &os, const Operator &anOperator) {
+
+    public:
+        friend std::ostream &operator<<(
+                std::ostream &os, const Operator &anOperator
+        ) {
             return os << "Operator{ }";
         }
 
     };
+
+
+    using OperatorSPtr = std::shared_ptr<Operator>;
 
 }
 

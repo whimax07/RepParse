@@ -30,6 +30,12 @@ namespace repper {
     private:
         void emptyFunToken() override {}
 
+        [[nodiscard]]
+        bool isEqual(const Token &rhs) const override {
+            auto rhsCasted = dynamic_cast<const End *>(&rhs);
+            return this->id_ == rhsCasted->id_;
+        }
+
 
     public:
         bool operator==(const End &rhs) const {

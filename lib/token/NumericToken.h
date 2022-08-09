@@ -43,6 +43,14 @@ namespace repper {
     private:
         void emptyFunToken() override {}
 
+        [[nodiscard]]
+        bool isEqual(const Token &rhs) const override {
+            auto rhsCasted = dynamic_cast<const NumericToken *>(&rhs);
+            return (!stringNumber_.empty() && !rhsCasted->stringNumber_.empty()
+                    && stringNumber_ == rhsCasted->stringNumber_)
+                   || number_.u64 == rhsCasted->number_.u64;
+        }
+
 
     public:
         [[nodiscard]]

@@ -10,7 +10,6 @@
 #include "Token.h"
 
 
-
 namespace repper {
 
     enum class E_Binary {
@@ -57,6 +56,12 @@ namespace repper {
     private:
         void emptyFunToken() override {}
 
+        [[nodiscard]]
+        bool isEqual(const Token &rhs) const override {
+            auto rhsCasted = dynamic_cast<const Binary *>(&rhs);
+            return this->id_ == rhsCasted->id_;
+        }
+
 
     public:
         [[nodiscard]]
@@ -67,14 +72,6 @@ namespace repper {
         [[nodiscard]]
         bool isLeftAssociative() const {
             return isLeftAssociative_;
-        }
-
-        virtual bool operator==(const Binary &rhs) const {
-            return id_ == rhs.id_;
-        }
-
-        virtual bool operator!=(const Binary &rhs) const {
-            return !(rhs == *this);
         }
 
         std::ostream const &operator<<(std::ostream &os) override {

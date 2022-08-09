@@ -7,6 +7,7 @@
 
 
 #include <ostream>
+#include <iostream>
 
 
 namespace repper {
@@ -18,16 +19,24 @@ namespace repper {
 
 
     public:
-        virtual bool operator==(const Token &rhs) const {
-            return true;
-        };
+        friend bool operator==(const Token &lhs, const Token &rhs) {
+            return typeid(lhs) == typeid(rhs) && lhs.isEqual(rhs);
+        }
 
-        virtual bool operator!=(const Token &rhs) const {
-            return this != &rhs;
+        bool operator!=(const Token &rhs) const {
+            return !(rhs == *this);
         };
 
         virtual std::ostream const &operator<<(std::ostream &os) {
             return os << "Token{}";
+        }
+
+
+    private:
+        [[nodiscard]]
+        virtual bool isEqual(const Token &rhs) const {
+            std::cout << "Token is equal." << std::endl;
+            return true;
         }
 
     };
