@@ -7,66 +7,77 @@
 
 
 #include <utility>
+#include <variant>
 #include "../token/Token.h"
 #include "../token/Operator.h"
+#include "../token/Unary.h"
+#include "../token/Binary.h"
+#include "../token/NumericToken.h"
 
 
 namespace repper {
 
-    class AST {
-
-    public:
-        using AstSPtr = std::shared_ptr<AST>;
+typedef std::variant<NumericToken, Unary, Binary> NodeTypes;
+//using NodeTypes = std::variant<NumericToken, Unary, Binary>;
 
 
-    private:
-        TokenSPtr value_;
+class AST {
 
-        AstSPtr left_;
-
-        AstSPtr right_;
+public:
+    using AstSPtr = std::shared_ptr<AST>;
 
 
-    public:
-        AST() : value_(), left_(), right_() {}
 
-        explicit AST(TokenSPtr value)
-                : value_(std::move(value)), left_(), right_() {}
+private:
+    NodeTypes value_;
 
-        AST(TokenSPtr value, AstSPtr left)
-                : value_(std::move(value)), left_(std::move(left)), right_() {}
+    AstSPtr left_;
 
-        AST(TokenSPtr value, AstSPtr left, AstSPtr right)
-                : value_(std::move(value)), left_(std::move(left)),
-                  right_(std::move(right)) {}
+    AstSPtr right_;
 
 
-    public:
-        TokenSPtr getValue() {
-            return value_;
-        }
+public:
+    AST() : value_(), left_(), right_() {}
 
-        void setValue(TokenSPtr value) {
-            value_ = std::move(value);
-        }
+    explicit AST(NodeTypes value)
+            : value_(std::move(value)), left_(), right_() {}
 
-        AstSPtr getLeft() {
-            return left_;
-        }
+    AST(NodeTypes value, AstSPtr left)
+            : value_(std::move(value)), left_(std::move(left)), right_() {}
 
-        void setLeft(AstSPtr left) {
-            left_ = std::move(left);
-        }
+    AST(NodeTypes value, AstSPtr left, AstSPtr right)
+            : value_(std::move(value)), left_(std::move(left)),
+              right_(std::move(right)) {}
 
-        AstSPtr getRight() {
-            return right_;
-        }
 
-        void setRight(AstSPtr right) {
-            right_ = std::move(right);
-        }
+public:
+    [[nodiscard]]
+    NodeTypes getValue() const {
+        return value_;
+    }
 
-    };
+    void setValue(NodeTypes value) {
+        auto temp = NodeTypes(std::move(value));
+        swap(value_, temp);
+    }
+
+    AstSPtr getLeft() const {
+        return left_;
+    }
+
+    void setLeft(AstSPtr left) {
+        left_ = std::move(left);
+    }
+
+    AstSPtr getRight() const {
+        return right_;
+    }
+
+    void setRight(AstSPtr right) {
+        right_ = std::move(right);
+    }
+
+};
 
 }
 

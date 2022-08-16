@@ -72,7 +72,7 @@ namespace repper {
         auto nextT = next();
 
         if (auto numericToken = dynamic_pointer_cast<NumericToken>(nextT)) {
-            operands_.push(AST(numericToken));
+            operands_.push(AST(*numericToken));
             consume();
             return;
         }
@@ -125,7 +125,7 @@ namespace repper {
             operands_.pop();
 
             operands_.push(AST(
-                    binary,
+                    *binary,
                     make_shared<AST>(operand_1),
                     make_shared<AST>(operand_2)
             ));
@@ -138,7 +138,7 @@ namespace repper {
             operands_.pop();
 
             operands_.push(AST(
-                    anOperator,
+                    *unary,
                     make_shared<AST>(operand)
             ));
 

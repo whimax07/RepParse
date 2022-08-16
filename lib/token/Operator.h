@@ -7,8 +7,7 @@
 
 
 #include <ostream>
-#include "NumericToken.h"
-
+#include "Token.h"
 
 namespace repper {
 

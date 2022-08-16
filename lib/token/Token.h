@@ -10,39 +10,43 @@
 #include <iostream>
 
 
+
 namespace repper {
 
-    class Token {
-
-    public:
-        virtual void emptyFunToken() {};
 
 
-    public:
-        friend bool operator==(const Token &lhs, const Token &rhs) {
-            return typeid(lhs) == typeid(rhs) && lhs.isEqual(rhs);
-        }
 
-        bool operator!=(const Token &rhs) const {
-            return !(rhs == *this);
-        };
+class Token {
 
-        virtual std::ostream const &operator<<(std::ostream &os) {
-            return os << "Token{}";
-        }
+public:
+    virtual void emptyFunToken() {  };
 
 
-    private:
-        [[nodiscard]]
-        virtual bool isEqual(const Token &rhs) const {
-            std::cout << "Token is equal." << std::endl;
-            return true;
-        }
+public:
+    friend bool operator==(const Token &lhs, const Token &rhs) {
+        return typeid(lhs) == typeid(rhs) && lhs.isEqual(rhs);
+    }
 
+    bool operator!=(const Token &rhs) const {
+        return !(rhs == *this);
     };
 
+    virtual std::ostream const &operator<<(std::ostream &os) {
+        return os << "Token{}";
+    }
 
-    using TokenSPtr = std::shared_ptr<Token>;
+
+private:
+    [[nodiscard]]
+    virtual bool isEqual(const Token &rhs) const {
+        std::cout << "Token is equal." << std::endl;
+        return true;
+    }
+
+};
+
+
+using TokenSPtr = std::shared_ptr<Token>;
 
 }
 
