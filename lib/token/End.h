@@ -24,7 +24,7 @@ namespace repper {
 
 
     public:
-        explicit End(E_End id) noexcept: id_(id) {}
+        explicit constexpr End(E_End id) noexcept: id_(id) {}
 
 
     private:

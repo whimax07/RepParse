@@ -38,7 +38,7 @@ namespace repper {
 
 
     public:
-        explicit Brackets(E_Brackets id) noexcept: id_(id) {}
+        explicit constexpr Brackets(E_Brackets id) noexcept: id_(id) {}
 
 
     private:

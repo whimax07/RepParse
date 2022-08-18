@@ -50,9 +50,9 @@ private:
 
 // Constructors and assignment.
 public:
-    Binary(E_Binary id, int precedence, bool isLeftAssociative) noexcept:
-            id_(id), precedence_(precedence),
-            isLeftAssociative_(isLeftAssociative) {}
+    constexpr Binary(E_Binary id, int precedence, bool isLeftAssociative)
+    noexcept: id_(id), precedence_(precedence),
+              isLeftAssociative_(isLeftAssociative) {}
 
     Binary(const Binary &toCopy) = default;
 

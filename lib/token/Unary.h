@@ -36,7 +36,7 @@ private:
 
 
 public:
-    explicit Unary(E_Unary id, int precedence) noexcept:
+    constexpr Unary(E_Unary id, int precedence) noexcept:
             id_(id), precedence_(precedence) {}
 
     Unary(const Unary &toCopy) = default;

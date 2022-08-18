@@ -25,7 +25,7 @@ namespace repper {
 
 
     public:
-        explicit Sentinel(E_Sentinel id) noexcept: id_(id) {}
+        explicit constexpr Sentinel(E_Sentinel id) noexcept: id_(id) {}
 
 
     private:
