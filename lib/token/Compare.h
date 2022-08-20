@@ -24,9 +24,7 @@ namespace repper {
             auto b1 = dynamic_pointer_cast<Binary>(operator1);
             auto b2 = dynamic_pointer_cast<Binary>(operator2);
             if (b1 != nullptr && b2 != nullptr) {
-                return (b1->getPrecedence() > b2->getPrecedence())
-                       || (b1->isLeftAssociative()
-                           && b1->getPrecedence() == b2->getPrecedence());
+                return (b1->getPrecedence() > b2->getPrecedence()) || (b1->isLeftAssociative());
             }
 
             auto u1 = dynamic_pointer_cast<Unary>(operator1);
