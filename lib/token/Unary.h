@@ -88,6 +88,7 @@ public:
         switch (id_) {
             case E_Unary::NEGATE: return -lhs;
         }
+        return {};
     }
 
 };

@@ -106,6 +106,7 @@ public:
             case E_Binary::ADD: return lhs + rhs;
             case E_Binary::SUBTRACT: return lhs - rhs;
         }
+        return {};
     }
 
 };
