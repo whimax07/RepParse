@@ -41,29 +41,24 @@ namespace repper
             if (c == ' ')
                 return str_.empty();
 
-            bool isCharOperator = validOps.find(c) != std::string::npos;
-            switch (type_)
+            if (validOps.find(c) != std::string::npos)
             {
-                case TokenType::Operator:
-                    if (!isCharOperator)
-                        return false;
+                if (type_ == TokenType::Numeric)
+                    return false;
 
-                    // If multi-char operators are ever required
-                    if (!regex_match(str_ + c, validMultiCharOps))
-                        return false;
-                    break;
+                // If multi-char operators are ever required
+                if (type_ == TokenType::Operator && !regex_match(str_ + c, validMultiCharOps))
+                    return false;
 
-                case TokenType::Numeric:
-                    if (isCharOperator)
-                        return false;
-                    break;
-
-                default:
-                    if (isCharOperator)
-                        type_ = TokenType::Operator;
-                    else
-                        type_ = TokenType::Numeric;
+                type_ = TokenType::Operator;
+                str_ += c;
+                return true;
             }
+
+            if (type_ == TokenType::Operator)
+                return false;
+
+            type_ = TokenType::Numeric;
             str_ += c;
             return true;
         }
