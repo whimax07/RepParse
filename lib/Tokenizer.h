@@ -50,19 +50,21 @@ namespace repper {
 
         void start();
 
-        bool checkIfOperator();
+        bool appendNextToken();
 
-        bool checkIfBracket();
+        bool checkIfOperator(const std::string& s);
 
-        bool checkIfNumber();
+        bool checkIfBracket(const std::string& s);
 
-        void parseHex();
+        bool checkIfNumber(const std::string& s);
 
-        void parseBin();
+        bool parseHex(const std::string& s);
 
-        void parseDec();
+        bool parseBin(const std::string& s);
 
-        void addNumberToken(Regex pattern);
+        bool parseDec(const std::string& s);
+
+        bool addNumberToken(const std::string& s, Regex pattern);
 
         bool isSubtract();
 

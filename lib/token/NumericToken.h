@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "Token.h"
+#include "NumberVariant.h"
 
 
 namespace repper {
