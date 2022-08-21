@@ -13,31 +13,36 @@ namespace repper {
 
     void
     Tokenizer::start() {
-        while (appendNextToken());
+        bool stringLeft = true;
+
+        while (stringLeft) {
+            auto rawToken = getNextRawToken();
+
+            std::string tokenStr = rawToken.getString();
+
+            switch (rawToken.getType()) {
+                case E_RawTokenType::NUMERIC:
+                    assert(checkIfNumber(tokenStr));
+                case E_RawTokenType::OPERATOR:
+                    assert(checkIfOperator(tokenStr) || checkIfBracket(tokenStr));
+                default:
+                    // Should only occur at end of string.
+                    assert(tokenStr.empty());
+                    stringLeft = false;
+            }
+        }
     }
 
-    bool
-    Tokenizer::appendNextToken() {
+
+    RawToken
+    Tokenizer::getNextRawToken() {
         auto rawToken = RawToken();
 
         while (fast_ < input_.size() && rawToken.isAppendValid(input_[fast_])) {
             fast_++;
         }
 
-        std::string tokenStr = rawToken.getString();
-        switch (rawToken.getType())
-        {
-            case E_RawTokenType::NUMERIC:
-                assert(checkIfNumber(tokenStr));
-                return true;
-            case E_RawTokenType::OPERATOR:
-                assert(checkIfOperator(tokenStr) || checkIfBracket(tokenStr));
-                return true;
-            default:
-                // Should only occur at end of string.
-                assert(tokenStr.empty());
-                return false;
-        }
+        return rawToken;
     }
 
 

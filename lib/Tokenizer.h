@@ -48,7 +48,7 @@ private:
 
     void start();
 
-    bool appendNextToken();
+    RawToken getNextRawToken();
 
     bool checkIfOperator(const std::string& s);
 
