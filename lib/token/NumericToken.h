@@ -42,6 +42,44 @@ public:
 private:
     void emptyFunToken() override {}
 
+    template<size_t NumBytes>
+    TypedNumbers parseFloat() {
+        if constexpr (NumBytes == 2) {
+            throw std::logic_error(
+                    "This programme does not support 2 byte floats."
+            );
+        } else if constexpr (NumBytes == 4) {
+            return std::stof(stringNumber_);
+        } else {
+            return std::stod(stringNumber_);
+        }
+    }
+
+    template<size_t NumBytes>
+    TypedNumbers parseInt() {
+        std::string trimmed = stringNumber_;
+        int base = 10;
+        if (stringNumber_.length() > 2) {
+            if (stringNumber_[1] == 'b' || stringNumber_[1] == 'B') {
+                base = 2;
+                trimmed = trimmed.substr(2);
+            } else if (stringNumber_[1] == 'x' || stringNumber_[1] == 'X') {
+                base = 16;
+                trimmed = trimmed.substr(2);
+            }
+        }
+
+        if constexpr (NumBytes == 1) {
+            return static_cast<uint8_t>(std::stoi(trimmed, nullptr, base));
+        } else if constexpr (NumBytes == 2) {
+            return static_cast<int16_t>(std::stoi(trimmed, nullptr, base));
+        } else if (NumBytes == 4) {
+            return std::stoi(trimmed, nullptr, base);
+        } else {
+            return std::stol(trimmed, nullptr, base);
+        }
+    }
+
 
 public:
     [[nodiscard]]
@@ -58,8 +96,13 @@ public:
                   << " }";
     }
 
+    template<size_t NumBytes>
     TypedNumbers parse() {
-        return stoi(stringNumber_);
+        if (stringNumber_.find('.') != std::string::npos) {
+            return parseFloat<NumBytes>();
+        } else {
+            return parseInt<NumBytes>();
+        }
     }
 
 };

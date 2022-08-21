@@ -121,17 +121,19 @@ namespace repper {
             switch (input_[fast_ + 1]) {
                 case 'x':
                 case 'X':
-                    fast_ += 2;
-                    if (fast_ > input_.length()) {
-                        throw std::exception();
+                    if (fast_ + 2 > input_.length()) {
+                        throw std::logic_error(
+                                "Hex indicator \"0x\" without a value."
+                        );
                     }
                     parseHex();
                     break;
                 case 'b':
                 case 'B':
-                    fast_ += 2;
-                    if (fast_ > input_.length()) {
-                        throw std::exception();
+                    if (fast_ + 2 > input_.length()) {
+                        throw std::logic_error(
+                                "Bin indicator \"0b\" without a value."
+                        );
                     }
                     parseBin();
                     break;
@@ -148,14 +150,14 @@ namespace repper {
 
     void
     Tokenizer::parseHex() {
-        std::regex hexDigits("[0-9aAbBcCdDeEfF_,]+");
+        std::regex hexDigits("0[xX][0-9aAbBcCdDeEfF_,]+");
         addNumberToken(hexDigits);
     }
 
 
     void
     Tokenizer::parseBin() {
-        std::regex hexDigits("[0-1_,]+");
+        std::regex hexDigits("0[bB][0-1_,]+");
         addNumberToken(hexDigits);
     }
 

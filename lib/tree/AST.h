@@ -77,6 +77,38 @@ public:
         right_ = std::move(right);
     }
 
+
+    template<size_t NumBytes>
+    static TypedNumbers evaluate(const AST::AstSPtr& toEval) {
+        auto nodeValue = toEval->getValue();
+
+        return std::visit(
+                [toEval](auto nodeValue) -> TypedNumbers {
+                    using T = std::decay_t<decltype(nodeValue)>;
+
+                    if constexpr (std::is_same_v<T, NumericToken>) {
+                        return nodeValue.template parse<NumBytes>();
+                    } else if constexpr (std::is_same_v<T, Unary>) {
+                        return std::visit(
+                                [nodeValue](auto in) -> TypedNumbers {
+                                    return nodeValue.evalUnary(in);
+                                },
+                                evaluate<NumBytes>(toEval->getLeft())
+                        );
+                    } else if constexpr (std::is_same_v<T, Binary>) {
+                        return std::visit(
+                                [nodeValue](auto in1, auto in2) -> TypedNumbers {
+                                    return nodeValue.evalBinary(in1, in2);
+                                },
+                                evaluate<NumBytes>(toEval->getLeft()),
+                                evaluate<NumBytes>(toEval->getRight())
+                        );
+                    }
+                } ,
+                nodeValue
+        );
+    }
+
 };
 
 }
