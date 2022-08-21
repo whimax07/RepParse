@@ -12,65 +12,63 @@
 #include <cassert>
 #include <regex>
 #include "token/Token.h"
+#include "token/RawToken.h"
 
 
 namespace repper {
 
-    using namespace std;
+using namespace std;
 
 
-    class Tokenizer {
-
-    public:
-        using Regex = std::__cxx11::basic_regex<char> &;
-
-
-    private:
-        std::string input_;
-
-        std::vector<TokenSPtr> tokens_;
-
-        uint64_t fast_ = 0;
-
-        uint64_t slow_ = 0;
+class Tokenizer {
+public:
+    using Regex = std::__cxx11::basic_regex<char> &;
 
 
-    public:
-        static std::vector<TokenSPtr> tokenize(std::string toTokenize) {
-            auto tokenizer = Tokenizer(std::move(toTokenize));
-            return tokenizer.tokens_;
-        }
+private:
+    std::string input_;
+
+    std::vector<TokenSPtr> tokens_;
+
+    uint64_t fast_ = 0;
 
 
-    private:
-        explicit Tokenizer(std::string input)
-                : input_(std::move(input)), tokens_() {
-            start();
-        }
+public:
+    static std::vector<TokenSPtr> tokenize(std::string toTokenize) {
+        auto tokenizer = Tokenizer(std::move(toTokenize));
+        return tokenizer.tokens_;
+    }
 
-        void start();
 
-        bool appendNextToken();
+private:
+    explicit Tokenizer(std::string input)
+            : input_(std::move(input)), tokens_() {
+        start();
+    }
 
-        bool checkIfOperator(const std::string& s);
+    void start();
 
-        bool checkIfBracket(const std::string& s);
+    bool appendNextToken();
 
-        bool checkIfNumber(const std::string& s);
+    bool checkIfOperator(const std::string& s);
 
-        bool parseHex(const std::string& s);
+    bool checkIfBracket(const std::string& s);
 
-        bool parseBin(const std::string& s);
+    bool checkIfNumber(const std::string& s);
 
-        bool parseDec(const std::string& s);
+    void parseHex(const std::string& s);
 
-        bool addNumberToken(const std::string& s, Regex pattern);
+    void parseBin(const std::string& s);
 
-        bool isSubtract();
+    void parseDec(const std::string& s);
 
-        TokenSPtr getLastToken();
+    bool addNumberToken(const std::string& s, Regex pattern);
 
-    };
+    bool isSubtract();
+
+    TokenSPtr getLastToken();
+
+};
 
 }
 

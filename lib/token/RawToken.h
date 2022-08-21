@@ -7,70 +7,81 @@
 
 
 #include "Symbols.h"
+#include "E_RawTokenType.h"
 
 
-namespace repper
-{
-    /*
-     * Handles the separation of tokens. It is assumed that all tokens
-     * consist of either a single operator or numeric.
-     */
-    class RawToken
-    {
-    public:
-        enum TokenType
-        {
-            Numeric,
-            Operator,
-            None
-        };
+namespace repper {
 
-        // This is a bit shit
-        inline const std::string static validOps {"+-*/()"};
-        inline const std::regex static validMultiCharOps {""};
 
-        explicit RawToken() { str_ = ""; }
-        ~RawToken() = default;
+/*
+ * Handles the separation of tokens. It is assumed that all tokens
+ * consist of either a single operator or numeric.
+ */
+class RawToken {
+public:
+    static constexpr std::string_view validOps_ = "+-*/()";
 
-        /*
-         * Returns false when token done
-         */
-        bool isAppendValid(char c)
-        {
-            // Allow any number of space pre-fixes
-            if (c == ' ')
-                return str_.empty();
+    static inline const std::regex multiCharOps_{""};
 
-            if (validOps.find(c) != std::string::npos)
-            {
-                if (type_ == TokenType::Numeric)
+
+private:
+    std::string str_;
+
+    E_RawTokenType type_ = E_RawTokenType::NONE;
+
+
+public:
+    explicit RawToken() : str_(), type_() {}
+
+    ~RawToken() = default;
+
+
+public:
+    /** Returns false when token done. */
+    bool isAppendValid(char c) {
+        // Allow any number of space pre-fixes
+        if (c == ' ')
+            return str_.empty();
+
+        bool isCharOperator = validOps_.find(c) != std::string::npos;
+        switch (type_) {
+            case E_RawTokenType::OPERATOR:
+                if (!isCharOperator) {
                     return false;
+                }
 
-                // If multi-char operators are ever required
-                if (type_ == TokenType::Operator && !regex_match(str_ + c, validMultiCharOps))
+                // If multi-char operators are ever required.
+                if (!regex_match(str_ + c, multiCharOps_)) {
                     return false;
+                }
+                break;
 
-                type_ = TokenType::Operator;
-                str_ += c;
-                return true;
-            }
+            case E_RawTokenType::NUMERIC:
+                if (isCharOperator) {
+                    return false;
+                }
+                break;
 
-            if (type_ == TokenType::Operator)
-                return false;
-
-            type_ = TokenType::Numeric;
-            str_ += c;
-            return true;
+            default:
+                if (isCharOperator) {
+                    type_ = E_RawTokenType::OPERATOR;
+                } else {
+                    type_ = E_RawTokenType::NUMERIC;
+                }
         }
+        str_ += c;
+        return true;
+    }
 
-        std::string getString() { return str_; }
-        TokenType getType() { return type_; }
 
-    private:
-        std::string str_;
-        TokenType type_ {None};
-    };
+public:
+    std::string getString() { return str_; }
+
+    E_RawTokenType getType() { return type_; }
+
+};
+
+
 }
-
 
 #endif //REPPARSERUNNABLE_RAWTOKEN_H

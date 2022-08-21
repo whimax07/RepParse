@@ -23,7 +23,7 @@ namespace repper {
         friend std::ostream &operator<<(
                 std::ostream &os, const Operator &anOperator
         ) {
-            return os << "Operator{ }";
+            return os << "OPERATOR{ }";
         }
 
     };

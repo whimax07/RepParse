@@ -146,7 +146,7 @@ namespace repper {
         }
 
         throw std::logic_error(Utils::sstr(
-                "Received a operator that wasn't Binary or Unary. Operator: ",
+                "Received a operator that wasn't Binary or Unary. OPERATOR: ",
                 anOperator
         ));
     }

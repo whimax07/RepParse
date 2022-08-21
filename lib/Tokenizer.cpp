@@ -10,32 +10,29 @@
 
 
 namespace repper {
-
-    typedef RawToken::TokenType RT;
-
     void
     Tokenizer::start() {
         while (appendNextToken());
     }
 
     bool
-    Tokenizer::appendNextToken()
-    {
+    Tokenizer::appendNextToken() {
         auto rawToken = RawToken();
-        while (fast_ < input_.size() && rawToken.isAppendValid(input_[fast_]))
+        while (fast_ < input_.size() && rawToken.isAppendValid(input_[fast_])) {
             fast_++;
+        }
 
         std::string tokenStr = rawToken.getString();
         switch (rawToken.getType())
         {
-            case RT::Numeric:
+            case E_RawTokenType::NUMERIC:
                 assert(checkIfNumber(tokenStr));
                 return true;
-            case RT::Operator:
+            case E_RawTokenType::OPERATOR:
                 assert(checkIfOperator(tokenStr) || checkIfBracket(tokenStr));
                 return true;
             default:
-                // Should only occur at end of string
+                // Should only occur at end of string.
                 assert(tokenStr.empty());
                 return false;
         }
@@ -110,7 +107,7 @@ namespace repper {
 
     bool
     Tokenizer::checkIfNumber(const std::string& s) {
-        std::regex numbers("[0-9]");
+        std::regex numbers("(0[xXbB])?[0-9aAbBcCdDeEfF_,]");
         if (!std::regex_search(s, numbers)) {
             return false;
         }
@@ -123,40 +120,42 @@ namespace repper {
                     if (2 > s.length()) {
                         throw std::exception();
                     }
-                    return parseHex(s.substr(2));
+                    parseHex(s.substr(2));
                 case 'b':
                 case 'B':
                     if (2 > s.length()) {
                         throw std::exception();
                     }
-                    return parseBin(s.substr(2));
+                    parseBin(s.substr(2));
                 default:
-                    return parseDec(s);
+                    parseDec(s);
+                    return true;
             }
         } else {
-            return parseDec(s);
+            parseDec(s);
+            return true;
         }
     }
 
 
-    bool
+    void
     Tokenizer::parseHex(const std::string& s) {
         std::regex hexDigits("[0-9aAbBcCdDeEfF_,]+");
-        return addNumberToken(s, hexDigits);
+        addNumberToken(s, hexDigits);
     }
 
 
-    bool
+    void
     Tokenizer::parseBin(const std::string& s) {
         std::regex hexDigits("[0-1_,]+");
-        return addNumberToken(s, hexDigits);
+        addNumberToken(s, hexDigits);
     }
 
 
-    bool
+    void
     Tokenizer::parseDec(const std::string& s) {
         std::regex hexDigits("[ ]*[0-9_,]+[.]?[0-9_,]*");
-        return addNumberToken(s, hexDigits);
+        addNumberToken(s, hexDigits);
     }
 
 
