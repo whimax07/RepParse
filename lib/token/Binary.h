@@ -105,8 +105,8 @@ public:
             case E_Binary::DIVIDE: return lhs / rhs;
             case E_Binary::ADD: return lhs + rhs;
             case E_Binary::SUBTRACT: return lhs - rhs;
+            default: throw std::exception();
         }
-        return {};
     }
 
 };

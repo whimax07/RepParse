@@ -87,8 +87,8 @@ public:
     constexpr TypedNumbers evalUnary(const T lhs) const {
         switch (id_) {
             case E_Unary::NEGATE: return -lhs;
+            default: throw std::exception();
         }
-        return {};
     }
 
 };
