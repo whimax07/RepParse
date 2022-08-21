@@ -4,42 +4,39 @@
 
 #include <regex>
 #include "Tokenizer.h"
-#include "token/NumericToken.h"
-#include "token/RawToken.h"
 #include "token/Symbols.h"
+#include "token/NumericToken.h"
 
 
 namespace repper {
 
-    typedef RawToken::TokenType RT;
-
     void
     Tokenizer::start() {
-        while (appendNextToken());
-    }
+        while (fast_ < input_.length()) {
+            if (std::isspace(input_[fast_])) {
+                fast_++;
+                continue;
+            }
 
-    bool
-    Tokenizer::appendNextToken()
-    {
-        auto rawToken = RawToken();
-        while (fast_ < input_.size() && rawToken.isAppendValid(input_[fast_]))
-            fast_++;
+            if (checkIfOperator()) {
+                fast_++;
+                continue;
+            }
 
-        std::string tokenStr = rawToken.getString();
-        switch (rawToken.getType())
-        {
-            case RT::Numeric:
-                assert(checkIfNumber(tokenStr));
-                return true;
-            case RT::Operator:
-                assert(checkIfOperator(tokenStr) || checkIfBracket(tokenStr));
-                return true;
-            default:
-                // Should only occur at end of string
-                assert(tokenStr.empty());
-                return false;
+            if (checkIfBracket()) {
+                fast_++;
+                continue;
+            }
+
+            if (checkIfNumber()) {
+                fast_++;
+                continue;
+            }
+
+            throw std::exception();
         }
     }
+
 
     bool
     Tokenizer::isSubtract() {
@@ -64,8 +61,8 @@ namespace repper {
 
 
     bool
-    Tokenizer::checkIfOperator(const std::string& s) {
-        switch (s[0]) {
+    Tokenizer::checkIfOperator() {
+        switch (input_[fast_]) {
             case '*':
                 tokens_.push_back(make_shared<Binary>(symbols::MULTIPLY));
                 break;
@@ -83,18 +80,20 @@ namespace repper {
                 }
                 break;
             }
+
             default:
                 return false;
         }
+
         return true;
     }
 
 
     bool
-    Tokenizer::checkIfBracket(const std::string& s) {
+    Tokenizer::checkIfBracket() {
         bool out = true;
 
-        switch (s[0]) {
+        switch (input_[fast_]) {
             case '(':
                 tokens_.push_back(make_shared<Brackets>(symbols::OPEN_BRACKET));
                 break;
@@ -104,76 +103,89 @@ namespace repper {
             default:
                 out = false;
         }
+
         return out;
     }
 
 
     bool
-    Tokenizer::checkIfNumber(const std::string& s) {
+    Tokenizer::checkIfNumber() {
         std::regex numbers("[0-9]");
-        if (!std::regex_search(s, numbers)) {
+        if (!std::regex_search(input_.substr(fast_, fast_ + 1), numbers)) {
             return false;
         }
 
+        slow_ = fast_;
 
-        if (2 < s.length()) {
-            switch (s[1]) {
+        if (fast_ + 1 < input_.length()) {
+            switch (input_[fast_ + 1]) {
                 case 'x':
                 case 'X':
-                    if (2 > s.length()) {
-                        throw std::exception();
+                    if (fast_ + 2 > input_.length()) {
+                        throw std::logic_error(
+                                "Hex indicator \"0x\" without a value."
+                        );
                     }
-                    return parseHex(s.substr(2));
+                    parseHex();
+                    break;
                 case 'b':
                 case 'B':
-                    if (2 > s.length()) {
-                        throw std::exception();
+                    if (fast_ + 2 > input_.length()) {
+                        throw std::logic_error(
+                                "Bin indicator \"0b\" without a value."
+                        );
                     }
-                    return parseBin(s.substr(2));
+                    parseBin();
+                    break;
                 default:
-                    return parseDec(s);
+                    parseDec();
             }
         } else {
-            return parseDec(s);
+            parseDec();
         }
+
+        return true;
     }
 
 
-    bool
-    Tokenizer::parseHex(const std::string& s) {
-        std::regex hexDigits("[0-9aAbBcCdDeEfF_,]+");
-        return addNumberToken(s, hexDigits);
+    void
+    Tokenizer::parseHex() {
+        std::regex hexDigits("0[xX][0-9aAbBcCdDeEfF_,]+");
+        addNumberToken(hexDigits);
     }
 
 
-    bool
-    Tokenizer::parseBin(const std::string& s) {
-        std::regex hexDigits("[0-1_,]+");
-        return addNumberToken(s, hexDigits);
+    void
+    Tokenizer::parseBin() {
+        std::regex hexDigits("0[bB][0-1_,]+");
+        addNumberToken(hexDigits);
     }
 
 
-    bool
-    Tokenizer::parseDec(const std::string& s) {
-        std::regex hexDigits("[ ]*[0-9_,]+[.]?[0-9_,]*");
-        return addNumberToken(s, hexDigits);
+    void
+    Tokenizer::parseDec() {
+        std::regex hexDigits("[0-9_,]+[.]?[0-9_,]*");
+        addNumberToken(hexDigits);
     }
 
 
-    bool
-    Tokenizer::addNumberToken(const std::string& s, Regex pattern) {
+    void
+    Tokenizer::addNumberToken(
+            Regex pattern
+    ) {
         std::smatch results;
-        bool found = std::regex_match(s, results, pattern);
+        std::string str = input_.substr(fast_);
+        bool found = std::regex_search(str, results, pattern);
 
         if (!found) {
             throw std::exception();
         }
 
+        fast_ += results[0].str().length();
         tokens_.push_back(make_shared<NumericToken>(
-                NumericToken(s)
+                NumericToken(input_.substr(slow_, fast_))
         ));
-        // Additional checks required?
-        return true;
+        fast_--;
     }
 
 

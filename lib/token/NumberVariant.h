@@ -13,6 +13,7 @@
 namespace repper {
 
 using TypedNumbers = std::variant<
+        uint8_t,
         int16_t,
         uint16_t,
         int32_t,

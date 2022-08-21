@@ -13,6 +13,4 @@ add_library(RepParseLib STATIC
         token/Compare.h
         token/Symbols.h
         utils/Utils.h
-        token/EvalAST.h
-        token/NumberVariant.h
-        token/RawToken.h)
+        token/NumberVariant.h)
