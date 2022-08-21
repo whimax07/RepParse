@@ -39,11 +39,14 @@ public:
 public:
     /** Returns false when token done. */
     bool isAppendValid(char c) {
-        // Allow any number of space pre-fixes
-        if (c == ' ')
+        // Allow any number of space pre-fixes.
+        if (c == ' ') {
             return str_.empty();
+        }
+
 
         bool isCharOperator = validOps_.find(c) != std::string::npos;
+
         switch (type_) {
             case E_RawTokenType::OPERATOR:
                 if (!isCharOperator) {

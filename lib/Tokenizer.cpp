@@ -19,6 +19,7 @@ namespace repper {
     bool
     Tokenizer::appendNextToken() {
         auto rawToken = RawToken();
+
         while (fast_ < input_.size() && rawToken.isAppendValid(input_[fast_])) {
             fast_++;
         }
@@ -39,6 +40,7 @@ namespace repper {
         }
     }
 
+
     bool
     Tokenizer::isSubtract() {
         if (tokens_.empty()) {
@@ -47,13 +49,11 @@ namespace repper {
 
         auto lastToken = getLastToken();
 
-        auto number
-                = dynamic_pointer_cast<NumericToken>(lastToken);
+        auto number = dynamic_pointer_cast<NumericToken>(lastToken);
         bool isNumber = number != nullptr;
 
         bool isCloseBracket = false;
-        if (auto bracket
-                = dynamic_pointer_cast<Brackets>(lastToken)) {
+        if (auto bracket = dynamic_pointer_cast<Brackets>(lastToken)) {
             isCloseBracket = *bracket == symbols::CLOSE_BRACKET;
         }
 
