@@ -10,6 +10,7 @@
 
 
 namespace repper {
+
     void
     Tokenizer::start() {
         while (appendNextToken());
@@ -83,6 +84,7 @@ namespace repper {
             default:
                 return false;
         }
+
         return true;
     }
 
@@ -101,6 +103,7 @@ namespace repper {
             default:
                 out = false;
         }
+
         return out;
     }
 
@@ -118,13 +121,17 @@ namespace repper {
                 case 'x':
                 case 'X':
                     if (2 > s.length()) {
-                        throw std::exception();
+                        throw std::logic_error(
+                                "Hex indicator \"0x\" without a value."
+                        );
                     }
                     parseHex(s.substr(2));
                 case 'b':
                 case 'B':
                     if (2 > s.length()) {
-                        throw std::exception();
+                        throw std::logic_error(
+                                "Bin indicator \"0b\" without a value."
+                        );
                     }
                     parseBin(s.substr(2));
                 default:
@@ -140,7 +147,7 @@ namespace repper {
 
     void
     Tokenizer::parseHex(const std::string& s) {
-        std::regex hexDigits("[0-9aAbBcCdDeEfF_,]+");
+        std::regex hexDigits("[0[xX]0-9aAbBcCdDeEfF_,]+");
         addNumberToken(s, hexDigits);
     }
 
