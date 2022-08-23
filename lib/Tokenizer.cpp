@@ -62,7 +62,11 @@ namespace repper {
 
     bool
     Tokenizer::checkIfOperator() {
+        // NOTE(Max): Can this be replaced with regex and a hashmap? The NEGATE
+        // and SUBTRACT operator sharing a symbol pattern makes it more than
+        // trivial harder.
         switch (input_[fast_]) {
+            // Arithmetic operators.
             case '*':
                 tokens_.push_back(make_shared<Binary>(symbols::MULTIPLY));
                 break;
@@ -77,6 +81,30 @@ namespace repper {
                     tokens_.push_back(make_shared<Binary>(symbols::SUBTRACT));
                 } else {
                     tokens_.push_back(make_shared<Unary>(symbols::NEGATE));
+                }
+                break;
+
+            // Bit operators.
+            case '&':
+                tokens_.push_back(make_shared<Binary>(symbols::BIT_AND));
+                break;
+            case '|':
+                tokens_.push_back(make_shared<Binary>(symbols::BIT_OR));
+                break;
+            case '>':
+                if (input_.length() >= fast_ + 1 && input_[fast_ + 1] == '>') {
+                    tokens_.push_back(
+                            make_shared<Binary>(symbols::RIGHT_SHIFT)
+                    );
+                    // Two char token so add an extra increment.
+                    fast_ ++;
+                }
+                break;
+            case '<':
+                if (input_.length() >= fast_ + 1 && input_[fast_ + 1] == '<') {
+                    tokens_.push_back(make_shared<Binary>(symbols::LEFT_SHIFT));
+                    // Two char token so add an extra increment.
+                    fast_ ++;
                 }
                 break;
             }

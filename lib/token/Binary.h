@@ -17,7 +17,11 @@ enum class E_Binary {
     ADD,
     SUBTRACT,
     MULTIPLY,
-    DIVIDE
+    DIVIDE,
+    RIGHT_SHIFT,
+    LEFT_SHIFT,
+    BIT_AND,
+    BIT_OR
 };
 
 constexpr const char *E_BinaryToString(E_Binary e) {
@@ -105,6 +109,10 @@ public:
             case E_Binary::DIVIDE: return lhs / rhs;
             case E_Binary::ADD: return lhs + rhs;
             case E_Binary::SUBTRACT: return lhs - rhs;
+            case E_Binary::RIGHT_SHIFT: return lhs >> rhs;
+            case E_Binary::LEFT_SHIFT: return lhs << rhs;
+            case E_Binary::BIT_AND: return lhs & rhs;
+            case E_Binary::BIT_OR: return lhs | rhs;
         }
     }
 
