@@ -108,6 +108,9 @@ public:
     inline TypedNumbers evalBinary(auto lhs, auto rhs) const;
 
 
+// Private function to help resolve operands that care if they receive integers
+// or floating point numbers. So far they are bitwise And, bitwise Or and bit
+// shifts.
 private:
     template<std::integral T, std::integral U>
     inline TypedNumbers rightShift(T lhs, U rhs) const;
