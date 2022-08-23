@@ -27,6 +27,8 @@ namespace repper {
     public:
         explicit constexpr Sentinel(E_Sentinel id) noexcept: id_(id) {}
 
+        ~Sentinel() = default;
+
 
     private:
         void emptyFunToken() override {}

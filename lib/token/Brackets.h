@@ -40,6 +40,8 @@ namespace repper {
     public:
         explicit constexpr Brackets(E_Brackets id) noexcept: id_(id) {}
 
+        ~Brackets() = default;
+
 
     private:
         void emptyFunToken() override {}

@@ -49,6 +49,8 @@ public:
             : value_(std::move(value)), left_(std::move(left)),
               right_(std::move(right)) {}
 
+    ~AST() = default;
+
 
 public:
     [[nodiscard]]

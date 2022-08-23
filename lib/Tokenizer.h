@@ -16,59 +16,61 @@
 
 namespace repper {
 
-    using namespace std;
+using namespace std;
 
 
-    class Tokenizer {
+class Tokenizer {
 
-    public:
-        using Regex = std::__cxx11::basic_regex<char> &;
-
-
-    private:
-        std::string input_;
-
-        std::vector<TokenSPtr> tokens_;
-
-        uint64_t fast_ = 0;
-
-        uint64_t slow_ = 0;
+public:
+    using Regex = std::__cxx11::basic_regex<char> &;
 
 
-    public:
-        static std::vector<TokenSPtr> tokenize(std::string toTokenize) {
-            auto tokenizer = Tokenizer(std::move(toTokenize));
-            return tokenizer.tokens_;
-        }
+private:
+    std::string input_;
+
+    std::vector<TokenSPtr> tokens_;
+
+    uint64_t fast_ = 0;
+
+    uint64_t slow_ = 0;
 
 
-    private:
-        explicit Tokenizer(std::string input)
-                : input_(std::move(input)), tokens_() {
-            start();
-        }
+public:
+    ~Tokenizer() = default;
 
-        void start();
+    static std::vector<TokenSPtr> tokenize(std::string toTokenize) {
+        auto tokenizer = Tokenizer(std::move(toTokenize));
+        return tokenizer.tokens_;
+    }
 
-        bool checkIfOperator();
 
-        bool checkIfBracket();
+private:
+    explicit Tokenizer(std::string input)
+            : input_(std::move(input)), tokens_() {
+        start();
+    }
 
-        bool checkIfNumber();
+    void start();
 
-        void parseHex();
+    bool checkIfOperator();
 
-        void parseBin();
+    bool checkIfBracket();
 
-        void parseDec();
+    bool checkIfNumber();
 
-        void addNumberToken(Regex pattern);
+    void parseHex();
 
-        bool isSubtract();
+    void parseBin();
 
-        TokenSPtr getLastToken();
+    void parseDec();
 
-    };
+    void addNumberToken(Regex pattern);
+
+    bool isSubtract();
+
+    TokenSPtr getLastToken();
+
+};
 
 }
 

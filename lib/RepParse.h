@@ -41,6 +41,8 @@ namespace repper {
         explicit RepParse(string toParse) :
                 tokens_(), toParse_(move(toParse)), operators_(), operands_() {}
 
+        ~RepParse() = default;
+
 
     public:
         static AST parse(const string &stringToParse);

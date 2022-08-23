@@ -26,6 +26,8 @@ namespace repper {
     public:
         explicit constexpr End(E_End id) noexcept: id_(id) {}
 
+        ~End() = default;
+
 
     private:
         void emptyFunToken() override {}
