@@ -106,7 +106,7 @@ public:
                                 evaluate<NumBytes>(toEval->getRight())
                         );
                     }
-                } ,
+                },
                 nodeValue
         );
     }

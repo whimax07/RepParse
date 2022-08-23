@@ -8,6 +8,8 @@
 
 #include "Operator.h"
 #include "NumberVariant.h"
+#include "../utils/Utils.h"
+
 
 
 namespace repper {
@@ -88,6 +90,10 @@ public:
         switch (id_) {
             case E_Unary::NEGATE: return -lhs;
         }
+
+        throw std::logic_error(Utils::sstr(
+                "Unary operand not found. ID: ", E_UnaryToString(id_)
+        ));
     }
 
 };
