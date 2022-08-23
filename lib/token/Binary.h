@@ -124,7 +124,6 @@ private:
     template<class T, class U>
     inline TypedNumbers bitAnd(T lhs, U rhs) const;
 
-
     template<class T, class U>
     inline TypedNumbers bitOr(T lhs, U rhs) const;
 
