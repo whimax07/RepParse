@@ -25,6 +25,11 @@ class AST {
 
 public:
     using AstSPtr = std::shared_ptr<AST>;
+    
+    template<class... Ts> 
+    struct Overloaded : Ts... {
+        using Ts::operator()...; 
+    };
 
 
 
@@ -80,6 +85,41 @@ public:
     }
 
 
+//     template<size_t NumBytes>
+//     static TypedNumbers evaluate(const AST::AstSPtr& toEval) {
+//         auto nodeValue = toEval->getValue();
+            
+//         return std::visit(
+//             Overloaded {
+//                 [toEval](NumericToken nodeValue) -> TypedNumbers {
+//                     return nodeValue.template parse<NumBytes>();
+//                 },
+                
+//                 [toEval](Unary nodeValue) -> TypedNumbers {
+//                     return std::visit(
+//                         [nodeValue](auto in) -> TypedNumbers {
+//                             return nodeValue.evalUnary(in);
+//                         },
+//                         // The recursion.
+//                         evaluate<NumBytes>(toEval->getLeft())
+//                     );
+//                 },
+                
+//                 [toEval](Binary nodeValue) -> TypedNumbers {
+//                     return std::visit(
+//                         [nodeValue](auto in1, auto in2) -> TypedNumbers {
+//                             return nodeValue.evalBinary(in1, in2);
+//                         },
+//                         // The recursion.
+//                         evaluate<NumBytes>(toEval->getLeft()),
+//                         evaluate<NumBytes>(toEval->getRight())
+//                     );
+//                 }
+//             },
+//             nodeValue
+//         );
+//     }
+    
     template<size_t NumBytes>
     static TypedNumbers evaluate(const AST::AstSPtr& toEval) {
         auto nodeValue = toEval->getValue();
