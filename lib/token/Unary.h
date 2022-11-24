@@ -85,8 +85,12 @@ public:
     }
 
 
+    TypedNumbers evalTypedNumber(const TypedNumbers lhs) {
+        return std::visit([&](auto in) { return evalUnary(in); }, lhs);
+    }
+
     template<class T>
-    constexpr TypedNumbers evalUnary(const T lhs) const {
+    [[nodiscard]] TypedNumbers evalUnary(const T lhs) const {
         switch (id_) {
             case E_Unary::NEGATE: return -lhs;
         }

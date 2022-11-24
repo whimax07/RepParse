@@ -8,6 +8,7 @@
 
 #include <utility>
 #include <variant>
+#include <stack>
 #include "../token/Token.h"
 #include "../token/Operator.h"
 #include "../token/Unary.h"
@@ -17,7 +18,7 @@
 
 namespace repper {
 
-typedef std::variant<NumericToken, Unary, Binary> NodeTypes;
+typedef std::variant<TypedNumbers, Unary, Binary> NodeTypes;
 //using NodeTypes = std::variant<NumericToken, Unary, Binary>;
 
 
@@ -25,11 +26,6 @@ class AST {
 
 public:
     using AstSPtr = std::shared_ptr<AST>;
-    
-    template<class... Ts> 
-    struct Overloaded : Ts... {
-        using Ts::operator()...; 
-    };
 
 
 
@@ -68,7 +64,7 @@ public:
         swap(value_, temp);
     }
 
-    AstSPtr getLeft() const {
+    [[nodiscard]] AstSPtr getLeft() const {
         return left_;
     }
 
@@ -76,7 +72,7 @@ public:
         left_ = std::move(left);
     }
 
-    AstSPtr getRight() const {
+    [[nodiscard]] AstSPtr getRight() const {
         return right_;
     }
 
@@ -85,71 +81,162 @@ public:
     }
 
 
-//     template<size_t NumBytes>
-//     static TypedNumbers evaluate(const AST::AstSPtr& toEval) {
-//         auto nodeValue = toEval->getValue();
-            
-//         return std::visit(
-//             Overloaded {
-//                 [toEval](NumericToken nodeValue) -> TypedNumbers {
-//                     return nodeValue.template parse<NumBytes>();
-//                 },
-                
-//                 [toEval](Unary nodeValue) -> TypedNumbers {
-//                     return std::visit(
-//                         [nodeValue](auto in) -> TypedNumbers {
-//                             return nodeValue.evalUnary(in);
-//                         },
-//                         // The recursion.
-//                         evaluate<NumBytes>(toEval->getLeft())
-//                     );
-//                 },
-                
-//                 [toEval](Binary nodeValue) -> TypedNumbers {
-//                     return std::visit(
-//                         [nodeValue](auto in1, auto in2) -> TypedNumbers {
-//                             return nodeValue.evalBinary(in1, in2);
-//                         },
-//                         // The recursion.
-//                         evaluate<NumBytes>(toEval->getLeft()),
-//                         evaluate<NumBytes>(toEval->getRight())
-//                     );
-//                 }
-//             },
-//             nodeValue
-//         );
-//     }
-    
+
     template<size_t NumBytes>
     static TypedNumbers evaluate(const AST::AstSPtr& toEval) {
         auto nodeValue = toEval->getValue();
 
-        return std::visit(
-                [toEval](auto nodeValue) -> TypedNumbers {
-                    using T = std::decay_t<decltype(nodeValue)>;
-
-                    if constexpr (std::is_same_v<T, NumericToken>) {
-                        return nodeValue.template parse<NumBytes>();
-                    } else if constexpr (std::is_same_v<T, Unary>) {
-                        return std::visit(
-                                [nodeValue](auto in) -> TypedNumbers {
-                                    return nodeValue.evalUnary(in);
-                                },
-                                evaluate<NumBytes>(toEval->getLeft())
-                        );
-                    } else if constexpr (std::is_same_v<T, Binary>) {
-                        return std::visit(
-                                [nodeValue](auto in1, auto in2) -> TypedNumbers {
-                                    return nodeValue.evalBinary(in1, in2);
-                                },
-                                evaluate<NumBytes>(toEval->getLeft()),
-                                evaluate<NumBytes>(toEval->getRight())
-                        );
-                    }
-                },
-                nodeValue
-        );
+        return std::visit(Overloaded<NumBytes>(toEval), nodeValue);
     }
+
+    template<size_t NumBytes>
+    struct Overloaded {
+
+    private:
+        const AST::AstSPtr& toEval;
+
+
+    public:
+        explicit Overloaded(const AstSPtr &toEval) : toEval(toEval) {  }
+
+        TypedNumbers operator()(NumericToken nodeValue) {
+            return nodeValue.template parse<NumBytes>();
+        }
+
+        TypedNumbers operator()(Unary nodeValue) {
+            return std::visit(
+                    [nodeValue](auto in) -> TypedNumbers {
+                        return nodeValue.evalUnary(in);
+                    },
+                    // The recursion.
+                    evaluate<NumBytes>(toEval->getLeft())
+            );
+        }
+
+        TypedNumbers operator()(Binary nodeValue) {
+            return std::visit(
+                    [nodeValue](auto in1, auto in2) -> TypedNumbers {
+                        return nodeValue.evalBinary(in1, in2);
+                    },
+                    // The recursion.
+                    evaluate<NumBytes>(toEval->getLeft()),
+                    evaluate<NumBytes>(toEval->getRight())
+            );
+        }
+    };
+
+
+
+
+public:
+    /**
+     * This function is safe as it mirrors the strucher of the AST passed to it.
+     */
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "LocalValueEscapesScope"
+    template<size_t NumBytes>
+    static TypedNumbers evaluateNonRec(const AST::AstSPtr& toEval) {
+
+        auto holdsNumber = [](Result in) { return std::holds_alternative<TypedNumbers>(in); };
+
+        std::stack<EvalStage> stack;
+
+        auto current = Result(&*toEval);
+        auto left = Result(&*toEval->getLeft());
+        auto right = Result(&*toEval->getRight());
+        auto evalLeft = true;
+
+        while (true) {
+            if (holdsNumber(current)) {
+                if (stack.empty()) {
+                    return std::get<TypedNumbers>(current);
+                }
+
+                current = stack.top().source;
+                if (evalLeft) {
+                    left = current;
+                    right = stack.top().right;
+                } else {
+                    left = stack.top().left;
+                    right = current;
+                }
+                evalLeft = stack.top().evalLeft;
+
+                continue;
+            }
+
+            auto ast = std::get<AST *>(current);
+
+            if (std::holds_alternative<Unary>(ast->value_)) {
+                if (holdsNumber(left)) {
+                    auto num = std::get<TypedNumbers>(left);
+                    auto unary = std::get<Unary>(ast->value_);
+                    current = unary.evalTypedNumber(num);
+                    continue;
+                }
+
+                if (std::holds_alternative<AST *>(left)) {
+                    stack.push(EvalStage { current, left, right, evalLeft });
+                    auto l = std::get<AST *>(left);
+                    current = l;
+                    left = &*(l->left_);
+                    right = &*(l->right_);
+                    evalLeft = true;
+                }
+
+                throw std::exception();
+            }
+
+            if (std::holds_alternative<Binary>(ast->value_)) {
+                if (holdsNumber(left) && holdsNumber(right)) {
+                    auto numL = std::get<TypedNumbers>(left);
+                    auto numR = std::get<TypedNumbers>(right);
+                    auto binary = std::get<Binary>(ast->value_);
+                    current = binary.evalTypedNumber(numL, numR);
+                    continue;
+                }
+
+                if (std::holds_alternative<AST *>(left)) {
+                    stack.push(EvalStage { current, left, right, evalLeft });
+                    auto l = std::get<AST *>(left);
+                    current = l;
+                    left = &*(l->left_);
+                    right = &*(l->right_);
+                    evalLeft = true;
+                    continue;
+                }
+
+                if (std::holds_alternative<AST *>(right)) {
+                    stack.push(EvalStage { current, left, right, evalLeft });
+                    auto r = std::get<AST *>(right);
+                    current = r;
+                    left = &*(r->left_);
+                    right = &*(r->right_);
+                    evalLeft = false;
+                    continue;
+                }
+
+                throw std::exception();
+            }
+
+            throw std::exception();
+        }
+
+        return TypedNumbers {};
+    }
+#pragma clang diagnostic pop
+
+
+private:
+    using Result = std::variant<AST *, TypedNumbers>;
+
+    struct EvalStage {
+        Result source;
+        Result left;
+        Result right;
+        bool evalLeft;
+    };
+
 
 };
 

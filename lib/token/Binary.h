@@ -105,6 +105,10 @@ public:
         return isLeftAssociative_;
     }
 
+    TypedNumbers evalTypedNumber(TypedNumbers lhs, TypedNumbers rhs) {
+        return std::visit([&](auto in1, auto in2) { return evalBinary(in1, in2); }, lhs, rhs);
+    }
+
     inline TypedNumbers evalBinary(auto lhs, auto rhs) const;
 
 
@@ -157,6 +161,9 @@ inline std::ostream const &Binary::operator<<(std::ostream &os) {
 
 // =============================================================================
 // ====== Eval =================================================================
+
+
+
 TypedNumbers Binary::evalBinary(const auto lhs, const auto rhs) const {
     switch (id_) {
         case E_Binary::MULTIPLY: return lhs * rhs;
