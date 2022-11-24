@@ -127,7 +127,6 @@ public:
 
 
 
-
 public:
     template<size_t NumBytes>
     static TypedNumbers evaluateNonRec(const AST::AstSPtr& toEval) {
@@ -176,9 +175,10 @@ public:
                     left = l->left_;
                     right = l->right_;
                     evalLeft = true;
+                    continue;
                 }
 
-                throw std::exception();
+                throw std::logic_error("`left` has a type not accounted for.");
             }
 
             if (std::holds_alternative<Binary>(ast->value_)) {
@@ -210,13 +210,11 @@ public:
                     continue;
                 }
 
-                throw std::exception();
+                throw std::logic_error("One of `left` or `right` has a type not accounted for.");
             }
 
-            throw std::exception();
+            throw std::logic_error("`current` holds a type not accounted for.");
         }
-
-        throw std::exception();
     }
 
 
@@ -229,7 +227,6 @@ private:
         Result right;
         bool evalLeft;
     };
-
 
 };
 
