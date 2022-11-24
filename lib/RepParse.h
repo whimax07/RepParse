@@ -39,7 +39,7 @@ namespace repper {
                 tokens_(), toParse_(), operators_(), operands_() {}
 
         explicit RepParse(string toParse) :
-                tokens_(), toParse_(move(toParse)), operators_(), operands_() {}
+                tokens_(), toParse_(std::move(toParse)), operators_(), operands_() {}
 
         ~RepParse() = default;
 
@@ -64,7 +64,6 @@ namespace repper {
         shared_ptr<Token> next();
 
         void consume();
-
 
     };
 
