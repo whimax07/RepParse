@@ -12,22 +12,21 @@ using namespace repper;
 
 TEST(AstParsing, basic) {
     auto myAst = AST(
-            NumericToken("10")
+            TypedNumbers {(int32_t) 10}
     );
 
     visit(
             [](auto toPrint) { std::cout << toPrint << std::endl; },
-            AST::evaluate<2>(std::make_shared<AST>(myAst))
+            AST::evaluate(std::make_shared<AST>(myAst))
     );
 
 
     auto floatAST = AST(
-            NumericToken("10.")
+            TypedNumbers {(float) 10}
     );
 
     visit(
             [](auto toPrint) { std::cout << toPrint << std::endl; },
-            AST::evaluate<4>(std::make_shared<AST>(floatAST))
+            AST::evaluate(std::make_shared<AST>(floatAST))
     );
-
 }

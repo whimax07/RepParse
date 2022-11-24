@@ -96,12 +96,11 @@ public:
                   << " }";
     }
 
-    template<size_t NumBytes>
     TypedNumbers parse() {
         if (stringNumber_.find('.') != std::string::npos) {
-            return parseFloat<NumBytes>();
+            return parseFloat<8>();
         } else {
-            return parseInt<NumBytes>();
+            return parseInt<8>();
         }
     }
 

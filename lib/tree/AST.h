@@ -28,7 +28,6 @@ public:
     using AstSPtr = std::shared_ptr<AST>;
 
 
-
 private:
     NodeTypes value_;
 
@@ -81,54 +80,12 @@ public:
     }
 
 
-
-    template<size_t NumBytes>
+public:
     static TypedNumbers evaluate(const AST::AstSPtr& toEval) {
         auto nodeValue = toEval->getValue();
-
-        return std::visit(Overloaded<NumBytes>(toEval), nodeValue);
+        return std::visit(Overloaded {toEval}, nodeValue);
     }
 
-    template<size_t NumBytes>
-    struct Overloaded {
-
-    private:
-        const AST::AstSPtr& toEval;
-
-
-    public:
-        explicit Overloaded(const AstSPtr &toEval) : toEval(toEval) {  }
-
-        TypedNumbers operator()(NumericToken nodeValue) {
-            return nodeValue.template parse<NumBytes>();
-        }
-
-        TypedNumbers operator()(Unary nodeValue) {
-            return std::visit(
-                    [nodeValue](auto in) -> TypedNumbers {
-                        return nodeValue.evalUnary(in);
-                    },
-                    // The recursion.
-                    evaluate<NumBytes>(toEval->getLeft())
-            );
-        }
-
-        TypedNumbers operator()(Binary nodeValue) {
-            return std::visit(
-                    [nodeValue](auto in1, auto in2) -> TypedNumbers {
-                        return nodeValue.evalBinary(in1, in2);
-                    },
-                    // The recursion.
-                    evaluate<NumBytes>(toEval->getLeft()),
-                    evaluate<NumBytes>(toEval->getRight())
-            );
-        }
-    };
-
-
-
-public:
-    template<size_t NumBytes>
     static TypedNumbers evaluateNonRec(const AST::AstSPtr& toEval) {
         auto holdsNumber = [](const Result& in) { return std::holds_alternative<TypedNumbers>(in); };
 
@@ -218,6 +175,7 @@ public:
     }
 
 
+
 private:
     using Result = std::variant<AstSPtr, TypedNumbers>;
 
@@ -226,6 +184,36 @@ private:
         Result left;
         Result right;
         bool evalLeft;
+    };
+
+    struct Overloaded {
+        const AST::AstSPtr& toEval;
+
+        TypedNumbers operator()(TypedNumbers typedNumbers) {
+            return typedNumbers;
+        }
+
+        TypedNumbers operator()(const Unary& nodeValue) {
+            return std::visit(
+                    [nodeValue](auto in) -> TypedNumbers {
+                        return nodeValue.evalUnary(in);
+                    },
+                    // The recursion.
+                    AST::evaluate(toEval->getLeft())
+            );
+        }
+
+        TypedNumbers operator()(Binary nodeValue) {
+            return std::visit(
+                    [nodeValue](auto in1, auto in2) -> TypedNumbers {
+                        return nodeValue.evalBinary(in1, in2);
+                    },
+                    // The recursion.
+                    AST::evaluate(toEval->getLeft()),
+                    AST::evaluate(toEval->getRight())
+            );
+        }
+
     };
 
 };

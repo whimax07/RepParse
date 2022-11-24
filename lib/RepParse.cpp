@@ -72,7 +72,7 @@ namespace repper {
         auto nextT = next();
 
         if (auto numericToken = dynamic_pointer_cast<NumericToken>(nextT)) {
-            operands_.push(AST(*numericToken));
+            operands_.push(AST(numericToken->parse()));
             consume();
             return;
         }
