@@ -129,21 +129,15 @@ public:
 
 
 public:
-    /**
-     * This function is safe as it mirrors the strucher of the AST passed to it.
-     */
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "LocalValueEscapesScope"
     template<size_t NumBytes>
     static TypedNumbers evaluateNonRec(const AST::AstSPtr& toEval) {
-
-        auto holdsNumber = [](Result in) { return std::holds_alternative<TypedNumbers>(in); };
+        auto holdsNumber = [](const Result& in) { return std::holds_alternative<TypedNumbers>(in); };
 
         std::stack<EvalStage> stack;
 
-        auto current = Result(&*toEval);
-        auto left = Result(&*toEval->getLeft());
-        auto right = Result(&*toEval->getRight());
+        auto current = Result(toEval);
+        auto left = Result(toEval->getLeft());
+        auto right = Result(toEval->getRight());
         auto evalLeft = true;
 
         while (true) {
@@ -165,7 +159,7 @@ public:
                 continue;
             }
 
-            auto ast = std::get<AST *>(current);
+            auto ast = std::get<AstSPtr>(current);
 
             if (std::holds_alternative<Unary>(ast->value_)) {
                 if (holdsNumber(left)) {
@@ -175,12 +169,12 @@ public:
                     continue;
                 }
 
-                if (std::holds_alternative<AST *>(left)) {
+                if (std::holds_alternative<AstSPtr>(left)) {
                     stack.push(EvalStage { current, left, right, evalLeft });
-                    auto l = std::get<AST *>(left);
+                    auto l = std::get<AstSPtr>(left);
                     current = l;
-                    left = &*(l->left_);
-                    right = &*(l->right_);
+                    left = l->left_;
+                    right = l->right_;
                     evalLeft = true;
                 }
 
@@ -196,22 +190,22 @@ public:
                     continue;
                 }
 
-                if (std::holds_alternative<AST *>(left)) {
+                if (std::holds_alternative<AstSPtr>(left)) {
                     stack.push(EvalStage { current, left, right, evalLeft });
-                    auto l = std::get<AST *>(left);
+                    auto l = std::get<AstSPtr>(left);
                     current = l;
-                    left = &*(l->left_);
-                    right = &*(l->right_);
+                    left = l->left_;
+                    right = l->right_;
                     evalLeft = true;
                     continue;
                 }
 
-                if (std::holds_alternative<AST *>(right)) {
+                if (std::holds_alternative<AstSPtr>(right)) {
                     stack.push(EvalStage { current, left, right, evalLeft });
-                    auto r = std::get<AST *>(right);
+                    auto r = std::get<AstSPtr>(right);
                     current = r;
-                    left = &*(r->left_);
-                    right = &*(r->right_);
+                    left = r->left_;
+                    right = r->right_;
                     evalLeft = false;
                     continue;
                 }
@@ -222,13 +216,12 @@ public:
             throw std::exception();
         }
 
-        return TypedNumbers {};
+        throw std::exception();
     }
-#pragma clang diagnostic pop
 
 
 private:
-    using Result = std::variant<AST *, TypedNumbers>;
+    using Result = std::variant<AstSPtr, TypedNumbers>;
 
     struct EvalStage {
         Result source;
