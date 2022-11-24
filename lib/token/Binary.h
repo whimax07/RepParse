@@ -105,11 +105,9 @@ public:
         return isLeftAssociative_;
     }
 
-    TypedNumbers evalTypedNumber(TypedNumbers lhs, TypedNumbers rhs) {
-        return std::visit([&](auto in1, auto in2) { return evalBinary(in1, in2); }, lhs, rhs);
-    }
+    TypedNumbers evalTypedNumber(TypedNumbers lhs, TypedNumbers rhs);
 
-    inline TypedNumbers evalBinary(auto lhs, auto rhs) const;
+    TypedNumbers evalBinary(auto lhs, auto rhs) const;
 
 
 // Private function to help resolve operands that care if they receive integers
@@ -161,7 +159,9 @@ inline std::ostream const &Binary::operator<<(std::ostream &os) {
 
 // =============================================================================
 // ====== Eval =================================================================
-
+TypedNumbers Binary::evalTypedNumber(TypedNumbers lhs, TypedNumbers rhs) {
+    return std::visit([&](auto in1, auto in2) { return evalBinary(in1, in2); }, lhs, rhs);
+}
 
 
 TypedNumbers Binary::evalBinary(const auto lhs, const auto rhs) const {

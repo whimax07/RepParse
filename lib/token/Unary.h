@@ -84,7 +84,6 @@ public:
                   << " }";
     }
 
-
     TypedNumbers evalTypedNumber(const TypedNumbers lhs) {
         return std::visit([&](auto in) { return evalUnary(in); }, lhs);
     }
