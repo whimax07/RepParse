@@ -31,8 +31,12 @@ public:
         return !(rhs == *this);
     };
 
-    virtual std::ostream const &operator<<(std::ostream &os) {
-        return os << "Token{}";
+    friend std::ostream const &operator<<(std::ostream &lhs, const Token &rhs) {
+        return lhs << rhs.toString();
+    }
+
+    [[nodiscard]] virtual std::string toString() const {
+        return "Token{}";
     }
 
 

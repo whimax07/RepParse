@@ -41,16 +41,16 @@ namespace repper {
 
 
     public:
+        [[nodiscard]] std::string toString() const override {
+            return "Sentinel{}";
+        }
+
         bool operator==(const Sentinel &rhs) const {
             return id_ == rhs.id_;
         }
 
         bool operator!=(const Sentinel &rhs) const {
             return !(rhs == *this);
-        }
-
-        std::ostream const &operator<<(std::ostream &os) override {
-            return os << "SENTINEL";
         }
 
     };

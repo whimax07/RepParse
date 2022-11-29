@@ -15,8 +15,8 @@ namespace repper {
 
     public:
         template<typename... Args>
-        static std::string sstr(Args &&... args) {
-            std::ostringstream sstr = std::ostringstream();
+        static std::string sstr(const Args &... args) {
+            auto sstr = std::ostringstream();
             // Fold expression.
             ( sstr << ... << args );
             return sstr.str();

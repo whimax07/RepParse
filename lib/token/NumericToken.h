@@ -83,6 +83,12 @@ private:
 
 
 public:
+    [[nodiscard]] std::string toString() const override {
+        auto sstr = std::ostringstream();
+        sstr << "NumericToken{ String:" << stringNumber_ << " }";
+        return sstr.str();
+    }
+
     [[nodiscard]]
     const std::string &getStringNumber() const {
         return stringNumber_;
@@ -90,11 +96,6 @@ public:
 
     void setStringNumber(const std::string &stringNumber) {
         stringNumber_ = stringNumber;
-    }
-
-    std::ostream const &operator<<(std::ostream &os) override {
-        return os << "NumericToken{ String: " << stringNumber_
-                  << " }";
     }
 
     TypedNumbers parse() {

@@ -65,6 +65,14 @@ private:
 
 
 public:
+    [[nodiscard]] std::string toString() const override {
+        auto sstr = std::ostringstream();
+        sstr << "Unary{ Type: " << E_UnaryToString(id_)
+             << ", Precedence: " << precedence_
+             << " }";
+        return sstr.str();
+    }
+
     [[nodiscard]]
     int getPrecedence() const {
         return precedence_;
@@ -76,12 +84,6 @@ public:
 
     bool operator!=(const Unary &rhs) const {
         return !(rhs == *this);
-    }
-
-    std::ostream const &operator<<(std::ostream &os) override {
-        return os << "Unary{ Type: " << E_UnaryToString(id_)
-                  << ", Precedence: " << precedence_
-                  << " }";
     }
 
     TypedNumbers evalTypedNumber(const TypedNumbers lhs) {

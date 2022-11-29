@@ -93,7 +93,7 @@ private:
 
 // Getter, Setters and operators.
 public:
-    std::ostream const &operator<<(std::ostream &os) override;
+    std::string toString() const override;
 
     [[nodiscard]]
     int getPrecedence() const {
@@ -149,11 +149,13 @@ inline Binary &Binary::operator=(Binary &&toMove) noexcept {
 }
 
 
-inline std::ostream const &Binary::operator<<(std::ostream &os) {
-    return os << "Binary{ Type: " << E_BinaryToString(id_)
-              << ", Precedence: " << precedence_
-              << ", Left Associative: " << isLeftAssociative_
-              << " }";
+inline std::string Binary::toString() const {
+    auto sstr = std::ostringstream();
+    sstr << "Binary{ Type: " << E_BinaryToString(id_)
+         << ", Precedence: " << precedence_
+         << ", Left Associative: " << isLeftAssociative_
+         << " }";
+    return sstr.str();
 }
 
 

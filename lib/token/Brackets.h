@@ -54,16 +54,18 @@ namespace repper {
 
 
     public:
+        [[nodiscard]] std::string toString() const override {
+            auto sstr = std::ostringstream();
+            sstr << "Bracket{ Type:" << E_BracketsToString(id_) << " }";
+            return sstr.str();
+        }
+
         bool operator==(const Brackets &rhs) const {
             return id_ == rhs.id_;
         }
 
         bool operator!=(const Brackets &rhs) const {
             return !(rhs == *this);
-        }
-
-        std::ostream const &operator<<(std::ostream &os) override {
-            return os << "Brackets{ Type: " << E_BracketsToString(id_) << " }";
         }
 
     };

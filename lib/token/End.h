@@ -48,8 +48,8 @@ namespace repper {
             return !(rhs == *this);
         }
 
-        std::ostream const &operator<<(std::ostream &os) override {
-            return os << "END";
+        [[nodiscard]] std::string toString() const override {
+            return "End{}";
         }
 
     };

@@ -20,10 +20,8 @@ namespace repper {
 
 
     public:
-        friend std::ostream &operator<<(
-                std::ostream &os, const Operator &anOperator
-        ) {
-            return os << "Operator{ }";
+        [[nodiscard]] std::string toString() const override {
+            return "Operator{}";
         }
 
     };
