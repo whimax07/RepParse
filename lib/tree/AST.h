@@ -53,6 +53,14 @@ public:
 
 
 public:
+    friend bool operator==(const AST &lhs, const AST &rhs) {
+        return isEqual(lhs, rhs);
+    }
+
+    friend bool operator!=(const AST &lhs, const AST &rhs) {
+        return !isEqual(lhs, rhs);
+    }
+
     [[nodiscard]]
     NodeTypes getValue() const {
         return value_;
@@ -77,6 +85,34 @@ public:
 
     void setRight(AstSPtr right) {
         right_ = std::move(right);
+    }
+
+
+private:
+    static bool isEqual(const AST &lhs, const AST &rhs) {
+        if (!(lhs.value_ == rhs.value_)) {
+            return false;
+        }
+
+        if (!lhs.left_ && !rhs.left_) {
+            /* Keep checking. */
+        } else if (lhs.left_ && rhs.left_) {
+            auto isLeftEqual = isEqual(*lhs.left_, *rhs.left_);
+            if (!isLeftEqual) return false;
+        }  else {
+            return false;
+        }
+
+        if (!lhs.right_ && !rhs.right_) {
+            /* Keep checking. */
+        } else if (lhs.right_ && rhs.right_) {
+            auto isRightEqual = isEqual(*lhs.right_, *rhs.right_);
+            if (!isRightEqual) return false;
+        } else {
+            return false;
+        }
+
+        return true;
     }
 
 
