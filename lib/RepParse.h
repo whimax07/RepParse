@@ -23,23 +23,21 @@ namespace repper {
     class RepParse {
 
     private:
-        vector<TokenSPtr> tokens_;
+        vector<TokenSPtr> tokens_ {};
 
-        string toParse_;
+        string toParse_ = {};
 
-        stack<OperatorSPtr> operators_;
+        stack<OperatorSPtr> operators_ {};
 
-        stack<AST> operands_;
+        stack<AST> operands_ {};
 
         size_t currentPosition_ = 0;
 
 
     public:
-        RepParse() :
-                tokens_(), toParse_(), operators_(), operands_() {}
+        RepParse() = default;
 
-        explicit RepParse(string toParse) :
-                tokens_(), toParse_(std::move(toParse)), operators_(), operands_() {}
+        explicit RepParse(string toParse) : toParse_(std::move(toParse)) {}
 
         ~RepParse() = default;
 

@@ -117,6 +117,7 @@ namespace repper {
     void
     RepParse::popOperator() {
         auto anOperator = operators_.top();
+        operators_.pop();
 
         if (auto binary = dynamic_pointer_cast<Binary>(anOperator)) {
             AST operand_2 = operands_.top();
@@ -171,7 +172,7 @@ namespace repper {
         if (currentPosition_ < tokens_.size()) {
             return tokens_[currentPosition_];
         } else {
-            return make_shared<Token>(symbols::END);
+            return make_shared<End>(symbols::END);
         }
     }
 
