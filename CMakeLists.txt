@@ -27,7 +27,7 @@ add_subdirectory(lib)
 # This builds the tests.
 add_executable(RepParseRunnable
         tests/BasicTokenizerTests.cpp
-        tests/TestAstEval.cpp
+        tests/AstCreationTests.cpp
         tests/TokenTests.cpp
         )
 
