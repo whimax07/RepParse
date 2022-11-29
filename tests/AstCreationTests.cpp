@@ -17,6 +17,10 @@ shared_ptr<AST> mnum(int64_t in) {
     return make_shared<AST>(AST(TypedNumbers(in)));
 }
 
+shared_ptr<AST> mflo(double in) {
+    return make_shared<AST>(AST(TypedNumbers(in)));
+}
+
 shared_ptr<AST> mast(AST in) {
     return make_shared<AST>(in);
 }
@@ -124,4 +128,13 @@ TEST(ArgParsing, negateWithSubtract) {
                     mast(symbols::NEGATE, mnum(10)));
     auto gen2 = RepParse::parse("20 - -10");
     ASSERT_TRUE(ast2 == gen2);
+}
+
+
+TEST(ArgParsing, withFloats) {
+    auto ast1 = AST(symbols::SUBTRACT,
+                    mast(symbols::DIVIDE, mflo(10), mnum(20)),
+                    mflo(7.5));
+    auto gen1 = RepParse::parse("(10. / 20) - 7.5");
+    ASSERT_TRUE(ast1 == gen1);
 }
