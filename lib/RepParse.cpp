@@ -161,7 +161,7 @@ namespace repper {
             consume();
         } else {
             throw std::logic_error(Utils::sstr(
-                    "Expected token: ", &token, ". Received: ", &*next()
+                    "Expected token: ", token.toString(), ". Received: ", next()->toString()
             ));
         }
     }
