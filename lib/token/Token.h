@@ -39,8 +39,7 @@ public:
 private:
     [[nodiscard]]
     virtual bool isEqual(const Token &rhs) const {
-        std::cout << "Token is equal." << std::endl;
-        return true;
+        throw std::logic_error("You can not compare two tokens.");
     }
 
 };
