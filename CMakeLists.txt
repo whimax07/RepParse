@@ -29,6 +29,7 @@ add_executable(RepParseRunnable
         tests/BasicTokenizerTests.cpp
         tests/AstCreationTests.cpp
         tests/TokenTests.cpp
+        tests/AstEvalTests.cpp
         )
 
 
