@@ -45,6 +45,22 @@ target_include_directories(RepParseRunnable PUBLIC
         )
 
 
+# A way to run code without having to go through a GTest.
+add_executable(Main
+        tests/NonCTestMain.cpp
+        )
+
+# Link the executable with the lib.
+target_link_libraries(
+        Main
+        RepParseLib
+)
+
+target_include_directories(Main PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "${PROJECT_SOURCE_DIR}/lib"
+        )
+
 
 # ==============================================================================
 # ===== Google stuff. ==========================================================
