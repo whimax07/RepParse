@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "Token.h"
+#include "NumberVariant.h"
 
 
 namespace repper {
@@ -102,6 +103,15 @@ public:
         } else {
             return parseInt<8>();
         }
+    }
+
+private:
+    [[nodiscard]] bool isEqual(const Token &rhs) const override {
+        if (auto rhsNumToken = dynamic_cast<const NumericToken *>(&rhs)) {
+            return stringNumber_ == rhsNumToken->stringNumber_;
+        }
+
+        return false;
     }
 
 };
