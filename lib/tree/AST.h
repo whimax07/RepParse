@@ -211,7 +211,6 @@ public:
     }
 
 
-
 private:
     using Result = std::variant<AstSPtr, TypedNumbers>;
 

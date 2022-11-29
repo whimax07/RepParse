@@ -40,6 +40,7 @@ namespace repper {
         return operands_.top();
     }
 
+
     /**
      * This is a recursive function but I like the way the alg flows with the
      * recursion. Also I don't know how to change it to a while loop of the top
