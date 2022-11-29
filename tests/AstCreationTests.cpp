@@ -137,4 +137,10 @@ TEST(ArgParsing, withFloats) {
                     mflo(7.5));
     auto gen1 = RepParse::parse("(10. / 20) - 7.5");
     ASSERT_TRUE(ast1 == gen1);
+
+    auto ast2 = AST(symbols::SUBTRACT,
+                    mast(symbols::DIVIDE, mflo(10), mnum(20)),
+                    mflo(7.5));
+    auto gen2 = RepParse::parse("(10./20)-7.5");
+    ASSERT_TRUE(ast2 == gen2);
 }
