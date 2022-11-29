@@ -159,7 +159,7 @@ inline std::ostream const &Binary::operator<<(std::ostream &os) {
 
 // =============================================================================
 // ====== Eval =================================================================
-TypedNumbers Binary::evalTypedNumber(TypedNumbers lhs, TypedNumbers rhs) {
+inline TypedNumbers Binary::evalTypedNumber(TypedNumbers lhs, TypedNumbers rhs) {
     return std::visit([&](auto in1, auto in2) { return evalBinary(in1, in2); }, lhs, rhs);
 }
 
