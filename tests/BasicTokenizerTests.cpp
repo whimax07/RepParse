@@ -81,6 +81,7 @@ TEST(Tokenizer, SimpleParse3) {
     EXPECT_TRUE(checker2(NumericToken("100")));
 }
 
+
 TEST(Tokenizer, AllSymbols) {
     auto tokens1 = Tokenizer::tokenize("(1 << 5) / 6 + ((4 >> 1) | 1) - 1");
     auto checker1 = CheckTokenOutput(tokens1);
