@@ -27,7 +27,8 @@ add_subdirectory(lib)
 # This builds the tests.
 add_executable(RepParseRunnable
         tests/BasicParseTests.cpp
-        tests/TestAstEval.cpp)
+        tests/TestAstEval.cpp
+        tests/TokenTests.cpp)
 
 # This links everything together. RepParseLib is set to static in its CMake.
 target_link_libraries(

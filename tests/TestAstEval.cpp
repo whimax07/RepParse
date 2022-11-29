@@ -30,3 +30,8 @@ TEST(AstParsing, basic) {
             AST::evaluate(std::make_shared<AST>(floatAST))
     );
 }
+
+
+TEST(AstParsing, basic_expresions) {
+
+}
