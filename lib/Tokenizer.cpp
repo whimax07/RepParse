@@ -139,7 +139,7 @@ namespace repper {
     bool
     Tokenizer::checkIfNumber() {
         std::regex numbers("[0-9]");
-        if (!std::regex_search(input_.substr(fast_, fast_ + 1), numbers)) {
+        if (!std::regex_search(input_.substr(fast_, 1), numbers)) {
             return false;
         }
 
@@ -185,15 +185,15 @@ namespace repper {
 
     void
     Tokenizer::parseBin() {
-        std::regex hexDigits("0[bB][0-1_,]+");
-        addNumberToken(hexDigits);
+        std::regex binDigits("0[bB][0-1_,]+");
+        addNumberToken(binDigits);
     }
 
 
     void
     Tokenizer::parseDec() {
-        std::regex hexDigits("[0-9_,]+[.]?[0-9_,]*");
-        addNumberToken(hexDigits);
+        std::regex decDigits("[0-9_,]+[\\.]?[0-9_,]*");
+        addNumberToken(decDigits);
     }
 
 
@@ -209,11 +209,11 @@ namespace repper {
             throw std::exception();
         }
 
-        fast_ += results[0].str().length();
+        auto length = results[0].str().length();
         tokens_.push_back(make_shared<NumericToken>(
-                NumericToken(input_.substr(slow_, fast_))
+                NumericToken(input_.substr(slow_, length))
         ));
-        fast_--;
+        fast_ += length - 1;
     }
 
 
