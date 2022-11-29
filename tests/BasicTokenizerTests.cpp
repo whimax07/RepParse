@@ -37,20 +37,20 @@ TEST(HelloTest, BasicAssertions) {
 }
 
 
-TEST(RepParseBasic, EmptyParse) {
+TEST(Tokenizer, EmptyParse) {
     auto emptyTokens = Tokenizer::tokenize("");
     EXPECT_TRUE(emptyTokens.empty());
 }
 
 
-TEST(RepParseBasic, SimpleParse1) {
+TEST(Tokenizer, SimpleParse1) {
     auto singleAdd = Tokenizer::tokenize("+");
     EXPECT_TRUE(*singleAdd[0] == symbols::ADD);
     EXPECT_FALSE(*singleAdd[0] == symbols::SUBTRACT);
 }
 
 
-TEST(RepParseBasic, SimpleParse2) {
+TEST(Tokenizer, SimpleParse2) {
     auto singleAdd = Tokenizer::tokenize("10 + 20");
     EXPECT_TRUE(*singleAdd[0] == NumericToken("10"));
     EXPECT_TRUE(*singleAdd[1] == symbols::ADD);
@@ -63,7 +63,7 @@ TEST(RepParseBasic, SimpleParse2) {
 }
 
 
-TEST(RepParseBasic, SimpleParse3) {
+TEST(Tokenizer, SimpleParse3) {
     auto singleMultiply = Tokenizer::tokenize("50 * 100");
     auto checker1 = CheckTokenOutput(singleMultiply);
     EXPECT_TRUE(checker1(NumericToken("50")));
@@ -81,7 +81,7 @@ TEST(RepParseBasic, SimpleParse3) {
     EXPECT_TRUE(checker2(NumericToken("100")));
 }
 
-TEST(RepParse, AllSymbols) {
+TEST(Tokenizer, AllSymbols) {
     auto tokens1 = Tokenizer::tokenize("(1 << 5) / 6 + ((4 >> 1) | 1) - 1");
     auto checker1 = CheckTokenOutput(tokens1);
 
