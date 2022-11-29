@@ -83,13 +83,13 @@ TEST(Tokenizer, SimpleParse3) {
 
 
 TEST(Tokenizer, AllSymbols) {
-    auto tokens1 = Tokenizer::tokenize("(1 << 5) / 6 + ((4 >> 1) | 1) - 1");
+    auto tokens1 = Tokenizer::tokenize("(1 << 5.5) / 6 + ((4 >> 1) | 1) - 1");
     auto checker1 = CheckTokenOutput(tokens1);
 
     EXPECT_TRUE(checker1(symbols::OPEN_BRACKET));
     EXPECT_TRUE(checker1(NumericToken("1")));
     EXPECT_TRUE(checker1(symbols::LEFT_SHIFT));
-    EXPECT_TRUE(checker1(NumericToken("5")));
+    EXPECT_TRUE(checker1(NumericToken("5.5")));
     EXPECT_TRUE(checker1(symbols::CLOSE_BRACKET));
     EXPECT_TRUE(checker1(symbols::DIVIDE));
     EXPECT_TRUE(checker1(symbols::NumericToken("6")));
