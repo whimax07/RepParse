@@ -22,6 +22,13 @@ namespace repper {
         return parser.parse();
     }
 
+    TypedNumbers
+    RepParse::evaluate(
+            const string &toEval
+    ) {
+        return AST::evaluate(make_shared<AST>(RepParse::parse(toEval)));
+    }
+
 
     // =========================================================================
     // ===== Private methods. ==================================================

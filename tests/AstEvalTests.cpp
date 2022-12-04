@@ -24,4 +24,19 @@ TEST(AstEval, basic) {
     auto res2 = AST::evaluate(make_shared<AST>(ast2));
     ASSERT_TRUE(eq(res2, 120));
     ASSERT_FALSE(eq(res2, 20));
+
+    ASSERT_TRUE(RepParse::evaluate("(10 * 20) + 30") == RepParse::evaluate("30 + (20 * 10)"));
+    ASSERT_TRUE(RepParse::evaluate("(10 * 20) + 30") == RepParse::evaluate("30 + (10 * 20)"));
+    ASSERT_TRUE(RepParse::evaluate("(10 * 20) + 30") == RepParse::evaluate("(10 * 20) + 30"));
+
+    EXPECT_THROW(RepParse::evaluate("10.0 & 32"), std::exception);
+}
+
+TEST(AstEval, bitOps) {
+    auto res1 = RepParse::evaluate("1 << 5");
+    ASSERT_TRUE(eq(res1, 32));
+
+    auto res2 = RepParse::evaluate("4751616 >> 3");
+    ASSERT_TRUE(eq(res2, 593952));
+    ASSERT_FALSE(eq(res2, 593951));
 }

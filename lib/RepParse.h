@@ -45,6 +45,8 @@ namespace repper {
     public:
         static AST parse(const string &stringToParse);
 
+        static TypedNumbers evaluate(const string &toEval);
+
 
     private:
         AST parse();
